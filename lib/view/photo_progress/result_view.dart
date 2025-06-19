@@ -262,7 +262,7 @@ class _ResultViewState extends State<ResultView> {
                           height: 20,
                           width: media.width - 40,
                           backgroundColor: Colors.grey.shade100,
-                          foregrondColor: Colors.purple,
+                          foregroundColor: Colors.purple,
                           ratio: 0.62,
                           direction: Axis.horizontal,
                           curve: Curves.fastLinearToSlowEaseIn,
@@ -450,8 +450,7 @@ class _ResultViewState extends State<ResultView> {
                               }).toList();
                             },
                             touchTooltipData: LineTouchTooltipData(
-                              tooltipBgColor: TColor.secondaryColor1,
-                              tooltipRoundedRadius: 20,
+                              getTooltipColor: (data) => TColor.secondaryColor1,
                               getTooltipItems:
                                   (List<LineBarSpot> lineBarsSpot) {
                                 return lineBarsSpot.map((lineBarSpot) {
@@ -564,7 +563,7 @@ class _ResultViewState extends State<ResultView> {
                           height: 10,
                           width: media.width - 120,
                           backgroundColor: TColor.primaryColor1,
-                          foregrondColor: const Color(0xffFFB2B1) ,
+                          foregroundColor: const Color(0xffFFB2B1) ,
                           ratio: (double.tryParse(iObj["diff_per"].toString()) ?? 0.0) / 100.0 ,
                           direction: Axis.horizontal,
                           curve: Curves.fastLinearToSlowEaseIn,
@@ -609,7 +608,7 @@ class _ResultViewState extends State<ResultView> {
   LineTouchData get lineTouchData1 => LineTouchData(
         handleBuiltInTouches: true,
         touchTooltipData: LineTouchTooltipData(
-          tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
+          getTooltipColor: (spot) => Colors.blueGrey.withAlpha((0.8 * 255).toInt()),
         ),
       );
 
@@ -740,7 +739,7 @@ class _ResultViewState extends State<ResultView> {
     }
 
     return SideTitleWidget(
-      axisSide: meta.axisSide,
+      meta: meta,
       space: 10,
       child: text,
     );

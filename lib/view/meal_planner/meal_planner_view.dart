@@ -211,8 +211,7 @@ class _MealPlannerViewState extends State<MealPlannerView> {
                               }).toList();
                             },
                             touchTooltipData: LineTouchTooltipData(
-                              tooltipBgColor: TColor.secondaryColor1,
-                              tooltipRoundedRadius: 20,
+                              getTooltipColor: (data) => TColor.secondaryColor1,
                               getTooltipItems:
                                   (List<LineBarSpot> lineBarsSpot) {
                                 return lineBarsSpot.map((lineBarSpot) {
@@ -523,7 +522,7 @@ class _MealPlannerViewState extends State<MealPlannerView> {
     }
 
     return SideTitleWidget(
-      axisSide: meta.axisSide,
+      meta: meta,
       space: 10,
       child: text,
     );

@@ -18,13 +18,13 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
   List latestArr = [
     {
       "image": "assets/img/pic_4.png",
-      "title": "Drinking 300ml Water",
-      "time": "About 1 minutes ago"
+      "title": "Minum 300ml Air",
+      "time": "Sekitar 1 menit yang lalu"
     },
     {
       "image": "assets/img/pic_5.png",
-      "title": "Eat Snack (Fitbar)",
-      "time": "About 3 hours ago"
+      "title": "Makan Camilan (Fitbar)",
+      "time": "Sekitar 3 jam yang lalu"
     },
   ];
 
@@ -57,7 +57,7 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
           ),
         ),
         title: Text(
-          "Activity Tracker",
+          "Pelacak Aktivitas",
           style: TextStyle(
               color: TColor.black, fontSize: 16, fontWeight: FontWeight.w700),
         ),
@@ -104,7 +104,7 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Today Target",
+                          "Target Hari Ini",
                           style: TextStyle(
                               color: TColor.black,
                               fontSize: 14,
@@ -148,7 +148,7 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
                           child: TodayTargetCell(
                             icon: "assets/img/water.png",
                             value: "8L",
-                            title: "Water Intake",
+                            title: "Asupan Air",
                           ),
                         ),
                         SizedBox(
@@ -158,7 +158,7 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
                           child: TodayTargetCell(
                             icon: "assets/img/foot.png",
                             value: "2400",
-                            title: "Foot Steps",
+                            title: "Langkah Kaki",
                           ),
                         ),
                       ],
@@ -173,7 +173,7 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Activity  Progress",
+                    "Progres Aktivitas",
                     style: TextStyle(
                         color: TColor.black,
                         fontSize: 16,
@@ -188,7 +188,7 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
                       ),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton(
-                          items: ["Weekly", "Monthly"]
+                          items: ["Mingguan", "Bulanan"]
                               .map((name) => DropdownMenuItem(
                                     value: name,
                                     child: Text(
@@ -201,7 +201,7 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
                           onChanged: (value) {},
                           icon: Icon(Icons.expand_more, color: TColor.white),
                           hint: Text(
-                            "Weekly",
+                            "Mingguan",
                             textAlign: TextAlign.center,
                             style: TextStyle(color: TColor.white, fontSize: 12),
                           ),
@@ -228,32 +228,32 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
                       BarChartData(
                   barTouchData: BarTouchData(
                     touchTooltipData: BarTouchTooltipData(
-                      tooltipBgColor: Colors.grey,
+                      getTooltipColor: (group) => Colors.grey,
                       tooltipHorizontalAlignment: FLHorizontalAlignment.right,
                       tooltipMargin: 10,
                       getTooltipItem: (group, groupIndex, rod, rodIndex) {
                         String weekDay;
                         switch (group.x) {
                           case 0:
-                            weekDay = 'Monday';
+                            weekDay = 'Senin';
                             break;
                           case 1:
-                            weekDay = 'Tuesday';
+                            weekDay = 'Selasa';
                             break;
                           case 2:
-                            weekDay = 'Wednesday';
+                            weekDay = 'Rabu';
                             break;
                           case 3:
-                            weekDay = 'Thursday';
+                            weekDay = 'Kamis';
                             break;
                           case 4:
-                            weekDay = 'Friday';
+                            weekDay = 'Jumat';
                             break;
                           case 5:
-                            weekDay = 'Saturday';
+                            weekDay = 'Sabtu';
                             break;
                           case 6:
-                            weekDay = 'Sunday';
+                            weekDay = 'Minggu';
                             break;
                           default:
                             throw Error();
@@ -329,7 +329,7 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Latest Workout",
+                    "Latihan Terbaru",
                     style: TextStyle(
                         color: TColor.black,
                         fontSize: 16,
@@ -338,7 +338,7 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
                   TextButton(
                     onPressed: () {},
                     child: Text(
-                      "See More",
+                      "Lihat Selengkapnya",
                       style: TextStyle(
                           color: TColor.gray,
                           fontSize: 14,
@@ -375,32 +375,32 @@ class _ActivityTrackerViewState extends State<ActivityTrackerView> {
     Widget text;
     switch (value.toInt()) {
       case 0:
-        text =  Text('Sun', style: style);
+        text =  Text('Sen', style: style);
         break;
       case 1:
-        text =  Text('Mon', style: style);
+        text =  Text('Sel', style: style);
         break;
       case 2:
-        text =  Text('Tue', style: style);
+        text =  Text('Rab', style: style);
         break;
       case 3:
-        text =  Text('Wed', style: style);
+        text =  Text('Kam', style: style);
         break;
       case 4:
-        text =  Text('Thu', style: style);
+        text =  Text('Jum', style: style);
         break;
       case 5:
-        text =  Text('Fri', style: style);
+        text =  Text('Sab', style: style);
         break;
       case 6:
-        text =  Text('Sat', style: style);
+        text =  Text('Ming', style: style);
         break;
       default:
         text =  Text('', style: style);
         break;
     }
     return SideTitleWidget(
-      axisSide: meta.axisSide,
+      meta: meta,
       space: 16,
       child: text,
     );

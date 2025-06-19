@@ -22,20 +22,19 @@ class _FinishedWorkoutViewState extends State<FinishedWorkoutView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-        
-              const SizedBox(height: 20,),
+              const SizedBox(
+                height: 20,
+              ),
               Image.asset(
                 "assets/img/complete_workout.png",
                 height: media.width * 0.8,
                 fit: BoxFit.fitHeight,
               ),
-        
               const SizedBox(
                 height: 20,
               ),
-        
               Text(
-                "Congratulations, You Have Finished Your Workout",
+                "Selamat, Anda Telah Menyelesaikan Latihan Anda", // Diterjemahkan
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: TColor.black,
@@ -43,46 +42,37 @@ class _FinishedWorkoutViewState extends State<FinishedWorkoutView> {
                   fontWeight: FontWeight.w700,
                 ),
               ),
-
               const SizedBox(
                 height: 20,
               ),
-
               Text(
-                "Exercises is king and nutrition is queen. Combine the two and you will have a kingdom",
+                "Latihan adalah raja dan nutrisi adalah ratu. Gabungkan keduanya dan Anda akan memiliki sebuah kerajaan", 
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: TColor.gray,
                   fontSize: 12,
                 ),
               ),
-
               const SizedBox(
                 height: 8,
               ),
-
               Text(
-                "-Jack Lalanne",
+                "Arwan", 
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: TColor.gray,
                   fontSize: 12,
                 ),
               ),
-
               const Spacer(),
-               RoundButton(
-                  title: "Back To Home",
+              RoundButton(
+                  title: "Kembali ke Beranda", 
                   onPressed: () {
                     Navigator.pop(context);
                   }),
-
-                 const SizedBox(
+              const SizedBox(
                 height: 8,
               ),
-
-
-
             ],
           ),
         ),

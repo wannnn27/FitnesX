@@ -13,26 +13,27 @@ class WhatYourGoalView extends StatefulWidget {
 }
 
 class _WhatYourGoalViewState extends State<WhatYourGoalView> {
-  CarouselController buttonCarouselController = CarouselController();
+  // Perbaikan: Gunakan CarouselSliderController untuk v5.x atau CarouselController untuk v4.x
+  CarouselSliderController buttonCarouselController = CarouselSliderController();
 
   List goalArr = [
     {
       "image": "assets/img/goal_1.png",
-      "title": "Improve Shape",
+      "title": "IMeningkatkan Bentuk Tubuh",
       "subtitle":
-          "I have a low amount of body fat\nand need / want to build more\nmuscle"
+          "Saya memiliki sedikit lemak tubuh\ndan perlu / ingin membangun lebih banyak\notot"
     },
     {
       "image": "assets/img/goal_2.png",
-      "title": "Lean & Tone",
+      "title": "Ramping & Berotot",
       "subtitle":
-          "I’m “skinny fat”. look thin but have\nno shape. I want to add learn\nmuscle in the right way"
+          "Saya 'kurus gemuk'. Terlihat kurus tapi tidak\nmemiliki bentuk tubuh. Saya ingin menambah\notot dengan cara yang benar"
     },
     {
       "image": "assets/img/goal_3.png",
-      "title": "Lose a Fat",
+      "title": "Menurunkan Lemak",
       "subtitle":
-          "I have over 20 lbs to lose. I want to\ndrop all this fat and gain muscle\nmass"
+          "Saya memiliki lebih dari 20 pon yang harus\ndihilangkan. Saya ingin menghilangkan semua\nlemak ini dan menambah massa otot"
     },
   ];
 
@@ -116,14 +117,14 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
                   height: media.width * 0.05,
                 ),
                 Text(
-                  "What is your goal ?",
+                  "Apa Tujuan Anda ?",
                   style: TextStyle(
                       color: TColor.black,
                       fontSize: 20,
                       fontWeight: FontWeight.w700),
                 ),
                 Text(
-                  "It will help us to choose a best\nprogram for you",
+                  "Ini akan membantu kami memilih program terbaik\nuntuk Anda",
                   textAlign: TextAlign.center,
                   style: TextStyle(color: TColor.gray, fontSize: 12),
                 ),
@@ -132,7 +133,7 @@ class _WhatYourGoalViewState extends State<WhatYourGoalView> {
                   height: media.width * 0.05,
                 ),
                 RoundButton(
-                    title: "Confirm",
+                    title: "Konfirmasi",
                     onPressed: () {
                       Navigator.push(
                           context,

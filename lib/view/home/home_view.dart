@@ -120,6 +120,7 @@ class _HomeViewState extends State<HomeView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // ...existing code...
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -131,7 +132,7 @@ class _HomeViewState extends State<HomeView> {
                           style: TextStyle(color: TColor.gray, fontSize: 12),
                         ),
                         Text(
-                          "Stefani Wong",
+                          "Adi Arwan Syah",
                           style: TextStyle(
                               color: TColor.black,
                               fontSize: 20,
@@ -395,8 +396,7 @@ class _HomeViewState extends State<HomeView> {
                                 }).toList();
                               },
                               touchTooltipData: LineTouchTooltipData(
-                                tooltipBgColor: TColor.secondaryColor1,
-                                tooltipRoundedRadius: 20,
+                                getTooltipColor: (data) => TColor.secondaryColor1,
                                 getTooltipItems:
                                     (List<LineBarSpot> lineBarsSpot) {
                                   return lineBarsSpot.map((lineBarSpot) {
@@ -453,7 +453,7 @@ class _HomeViewState extends State<HomeView> {
                               height: media.width * 0.85,
                               width: media.width * 0.07,
                               backgroundColor: Colors.grey.shade100,
-                              foregrondColor: Colors.purple,
+                              foregroundColor: Colors.purple, // perbaikan typo
                               ratio: 0.5,
                               direction: Axis.vertical,
                               curve: Curves.fastLinearToSlowEaseIn,
@@ -848,8 +848,7 @@ class _HomeViewState extends State<HomeView> {
                             }).toList();
                           },
                           touchTooltipData: LineTouchTooltipData(
-                            tooltipBgColor: TColor.secondaryColor1,
-                            tooltipRoundedRadius: 20,
+                            getTooltipColor: (data) => TColor.secondaryColor1,
                             getTooltipItems: (List<LineBarSpot> lineBarsSpot) {
                               return lineBarsSpot.map((lineBarSpot) {
                                 return LineTooltipItem(
@@ -992,7 +991,7 @@ class _HomeViewState extends State<HomeView> {
   LineTouchData get lineTouchData1 => LineTouchData(
         handleBuiltInTouches: true,
         touchTooltipData: LineTouchTooltipData(
-          tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
+          getTooltipColor: (data) => Colors.blueGrey.withOpacity(0.8),
         ),
       );
 
@@ -1125,8 +1124,8 @@ class _HomeViewState extends State<HomeView> {
         break;
     }
 
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
+    return SideTitleWidget( 
+      meta: meta,
       space: 10,
       child: text,
     );

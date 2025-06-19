@@ -96,7 +96,7 @@ class _ProfileViewState extends State<ProfileView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Stefani Wong",
+                          "Adi Arwan Syah",
                           style: TextStyle(
                             color: TColor.black,
                             fontSize: 14,
@@ -140,7 +140,7 @@ class _ProfileViewState extends State<ProfileView> {
                 children: [
                   Expanded(
                     child: TitleSubtitleCell(
-                      title: "180cm",
+                      title: "165cm",
                       subtitle: "Height",
                     ),
                   ),

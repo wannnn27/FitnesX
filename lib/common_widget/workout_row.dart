@@ -53,7 +53,7 @@ class WorkoutRow extends StatelessWidget {
                   height: 15,
                   width: media.width * 0.5,
                   backgroundColor: Colors.grey.shade100,
-                  foregrondColor: Colors.purple,
+                  foregroundColor: Colors.purple,
                   ratio: wObj["progress"] as double? ?? 0.0,
                   direction: Axis.horizontal,
                   curve: Curves.fastLinearToSlowEaseIn,

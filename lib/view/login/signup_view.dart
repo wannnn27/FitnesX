@@ -3,16 +3,20 @@ import 'package:fitness/common_widget/round_button.dart';
 import 'package:fitness/common_widget/round_textfield.dart';
 import 'package:fitness/view/login/complete_profile_view.dart';
 import 'package:fitness/view/login/login_view.dart';
+// Tidak perlu mengimpor tampilan tertentu saat menggunakan named routes untuk navigasi dalam file ini
+// import 'package:fitness/view/login/complete_profile_view.dart';
+// import 'package:fitness/view/login/login_view.dart';
 import 'package:flutter/material.dart';
 
-class SignUpView extends StatefulWidget {
-  const SignUpView({super.key});
+// Diganti nama dari SignUpView menjadi SignupView untuk konsistensi dengan rute main.dart
+class SignupView extends StatefulWidget {
+  const SignupView({super.key});
 
   @override
-  State<SignUpView> createState() => _SignUpViewState();
+  State<SignupView> createState() => _SignupViewState();
 }
 
-class _SignUpViewState extends State<SignUpView> {
+class _SignupViewState extends State<SignupView> {
   bool isCheck = false;
   @override
   Widget build(BuildContext context) {
@@ -27,11 +31,11 @@ class _SignUpViewState extends State<SignUpView> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  "Hey there,",
+                  "Hai di sana,", // Diterjemahkan
                   style: TextStyle(color: TColor.gray, fontSize: 16),
                 ),
                 Text(
-                  "Create an Account",
+                  "Buat Akun", // Diterjemahkan
                   style: TextStyle(
                       color: TColor.black,
                       fontSize: 20,
@@ -41,21 +45,21 @@ class _SignUpViewState extends State<SignUpView> {
                   height: media.width * 0.05,
                 ),
                 const RoundTextField(
-                  hitText: "First Name",
+                  hitText: "Nama Depan", // Diterjemahkan
                   icon: "assets/img/user_text.png",
                 ),
                 SizedBox(
                   height: media.width * 0.04,
                 ),
                 const RoundTextField(
-                  hitText: "Last Name",
+                  hitText: "Nama Belakang", // Diterjemahkan
                   icon: "assets/img/user_text.png",
                 ),
                 SizedBox(
                   height: media.width * 0.04,
                 ),
                 const RoundTextField(
-                  hitText: "Email",
+                  hitText: "Email", // Diterjemahkan
                   icon: "assets/img/email.png",
                   keyboardType: TextInputType.emailAddress,
                 ),
@@ -63,11 +67,13 @@ class _SignUpViewState extends State<SignUpView> {
                   height: media.width * 0.04,
                 ),
                 RoundTextField(
-                  hitText: "Password",
+                  hitText: "Kata Sandi", // Diterjemahkan
                   icon: "assets/img/lock.png",
                   obscureText: true,
                   rigtIcon: TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        // TODO: Implementasi toggle visibilitas kata sandi jika diperlukan
+                      },
                       child: Container(
                           alignment: Alignment.center,
                           width: 20,
@@ -99,20 +105,22 @@ class _SignUpViewState extends State<SignUpView> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 8),
-                      child:  Text(
-                          "By continuing you accept our Privacy Policy and\nTerm of Use",
-                          style: TextStyle(color: TColor.gray, fontSize: 10),
-                        ),
-                     
+                      child: Text(
+                        "Dengan melanjutkan, Anda menyetujui Kebijakan Privasi dan\nKetentuan Penggunaan kami", // Diterjemahkan
+                        style: TextStyle(color: TColor.gray, fontSize: 10),
+                      ),
                     )
                   ],
                 ),
                 SizedBox(
                   height: media.width * 0.4,
                 ),
-                RoundButton(title: "Register", onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const CompleteProfileView()  ));
-                }),
+                RoundButton(
+                    title: "Daftar", // Diterjemahkan
+                    onPressed: () {
+                      // Navigasi menggunakan named route ke CompleteProfileView
+                      Navigator.pushNamed(context, '/complete_profile');
+                    }),
                 SizedBox(
                   height: media.width * 0.04,
                 ),
@@ -125,7 +133,7 @@ class _SignUpViewState extends State<SignUpView> {
                       color: TColor.gray.withOpacity(0.5),
                     )),
                     Text(
-                      "  Or  ",
+                      "  Atau  ", // Diterjemahkan
                       style: TextStyle(color: TColor.black, fontSize: 12),
                     ),
                     Expanded(
@@ -142,7 +150,9 @@ class _SignUpViewState extends State<SignUpView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        // Tangani pendaftaran Google
+                      },
                       child: Container(
                         width: 50,
                         height: 50,
@@ -162,13 +172,13 @@ class _SignUpViewState extends State<SignUpView> {
                         ),
                       ),
                     ),
-
-                     SizedBox(
+                    SizedBox(
                       width: media.width * 0.04,
                     ),
-
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        // Tangani pendaftaran Facebook
+                      },
                       child: Container(
                         width: 50,
                         height: 50,
@@ -195,23 +205,21 @@ class _SignUpViewState extends State<SignUpView> {
                 ),
                 TextButton(
                   onPressed: () {
-                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginView()));
+                    // Navigasi menggunakan named route ke LoginView
+                    Navigator.pushNamed(context, '/login');
                   },
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        "Already have an account? ",
+                        "Sudah punya akun? ", // Diterjemahkan
                         style: TextStyle(
                           color: TColor.black,
                           fontSize: 14,
                         ),
                       ),
                       Text(
-                        "Login",
+                        "Masuk", // Diterjemahkan
                         style: TextStyle(
                             color: TColor.black,
                             fontSize: 14,

@@ -24,7 +24,7 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
       "image": "assets/img/c_1.png",
     },
     {
-      "name": "Cake",
+      "name": "Kue", // Diterjemahkan
       "image": "assets/img/c_2.png",
     },
     {
@@ -32,7 +32,7 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
       "image": "assets/img/c_3.png",
     },
     {
-      "name": "Smoothies",
+      "name": "Smoothie", // Diterjemahkan
       "image": "assets/img/c_4.png",
     },
     {
@@ -40,7 +40,7 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
       "image": "assets/img/c_1.png",
     },
     {
-      "name": "Cake",
+      "name": "Kue", // Diterjemahkan
       "image": "assets/img/c_2.png",
     },
     {
@@ -48,44 +48,44 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
       "image": "assets/img/c_3.png",
     },
     {
-      "name": "Smoothies",
+      "name": "Smoothie", // Diterjemahkan
       "image": "assets/img/c_4.png",
     },
   ];
 
   List popularArr = [
     {
-      "name": "Blueberry Pancake",
+      "name": "Pancake Blueberry", // Diterjemahkan
       "image": "assets/img/f_1.png",
-      "b_image":"assets/img/pancake_1.png",
-      "size": "Medium",
-      "time": "30mins",
-      "kcal": "230kCal"
+      "b_image": "assets/img/pancake_1.png",
+      "size": "Sedang", // Diterjemahkan
+      "time": "30 menit", // Diterjemahkan
+      "kcal": "230kKal"
     },
     {
-      "name": "Salmon Nigiri",
+      "name": "Nigiri Salmon", // Diterjemahkan
       "image": "assets/img/f_2.png",
-       "b_image": "assets/img/nigiri.png",
-      "size": "Medium",
-      "time": "20mins",
-      "kcal": "120kCal"
+      "b_image": "assets/img/nigiri.png",
+      "size": "Sedang", // Diterjemahkan
+      "time": "20 menit", // Diterjemahkan
+      "kcal": "120kKal"
     },
   ];
 
   List recommendArr = [
     {
-      "name": "Honey Pancake",
+      "name": "Pancake Madu", // Diterjemahkan
       "image": "assets/img/rd_1.png",
-      "size": "Easy",
-      "time": "30mins",
-      "kcal": "180kCal"
+      "size": "Mudah", // Diterjemahkan
+      "time": "30 menit", // Diterjemahkan
+      "kcal": "180kKal"
     },
     {
-      "name": "Canai Bread",
+      "name": "Roti Canai", // Diterjemahkan
       "image": "assets/img/m_4.png",
-      "size": "Easy",
-      "time": "20mins",
-      "kcal": "230kCal"
+      "size": "Mudah", // Diterjemahkan
+      "time": "20 menit", // Diterjemahkan
+      "kcal": "230kKal"
     },
   ];
 
@@ -174,7 +174,7 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
                           width: 25,
                           height: 25,
                         ),
-                        hintText: "Search Pancake"),
+                        hintText: "Cari Pancake"), // Diterjemahkan
                   )),
                   Container(
                     margin: const EdgeInsets.symmetric(horizontal: 8),
@@ -202,7 +202,7 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Category",
+                    "Kategori", // Diterjemahkan
                     style: TextStyle(
                         color: TColor.black,
                         fontSize: 16,
@@ -231,7 +231,7 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Text(
-                "Recommendation\nfor Diet",
+                "Rekomendasi\nuntuk Diet", // Diterjemahkan
                 style: TextStyle(
                     color: TColor.black,
                     fontSize: 16,
@@ -258,7 +258,7 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Text(
-                "Popular",
+                "Populer", // Diterjemahkan
                 style: TextStyle(
                     color: TColor.black,
                     fontSize: 16,

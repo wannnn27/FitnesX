@@ -12,12 +12,12 @@ class NotificationView extends StatefulWidget {
 
 class _NotificationViewState extends State<NotificationView> {
   List notificationArr = [
-    {"image": "assets/img/Workout1.png", "title": "Hey, it’s time for lunch", "time": "About 1 minutes ago"},
-    {"image": "assets/img/Workout2.png", "title": "Don’t miss your lowerbody workout", "time": "About 3 hours ago"},
-    {"image": "assets/img/Workout3.png", "title": "Hey, let’s add some meals for your b", "time": "About 3 hours ago"},
-    {"image": "assets/img/Workout1.png", "title": "Congratulations, You have finished A..", "time": "29 May"},
-    {"image": "assets/img/Workout2.png", "title": "Hey, it’s time for lunch", "time": "8 April"},
-    {"image": "assets/img/Workout3.png", "title": "Ups, You have missed your Lowerbo...", "time": "8 April"},
+    {"image": "assets/img/Workout1.png", "title": "Hei, waktunya makan siang", "time": "Sekitar 1 menit yang lalu"}, 
+    {"image": "assets/img/Workout2.png", "title": "Jangan lewatkan latihan tubuh bagian bawah Anda", "time": "Sekitar 3 jam yang lalu"}, 
+    {"image": "assets/img/Workout3.png", "title": "Hei, mari tambahkan beberapa makanan untuk b Anda", "time": "Sekitar 3 jam yang lalu"}, 
+    {"image": "assets/img/Workout1.png", "title": "Selamat, Anda telah menyelesaikan A..", "time": "29 Mei"}, 
+    {"image": "assets/img/Workout2.png", "title": "Hei, waktunya makan siang", "time": "8 April"}, 
+    {"image": "assets/img/Workout3.png", "title": "Ups, Anda melewatkan latihan tubuh bagian bawah Anda...", "time": "8 April"}, 
   ];
 
   @override
@@ -48,7 +48,7 @@ class _NotificationViewState extends State<NotificationView> {
           ),
         ),
         title: Text(
-          "Notification",
+          "Notifikasi", // Diterjemahkan
           style: TextStyle(
               color: TColor.black, fontSize: 16, fontWeight: FontWeight.w700),
         ),
@@ -79,9 +79,12 @@ class _NotificationViewState extends State<NotificationView> {
         itemBuilder: ((context, index) {
           var nObj = notificationArr[index] as Map? ?? {};
           return NotificationRow(nObj: nObj);
-      }), separatorBuilder: (context, index){
-        return Divider(color: TColor.gray.withOpacity(0.5), height: 1, );
-      }, itemCount: notificationArr.length),
+        }),
+        separatorBuilder: (context, index) {
+          return Divider(color: TColor.gray.withOpacity(0.5), height: 1);
+        },
+        itemCount: notificationArr.length,
+      ),
     );
   }
 }

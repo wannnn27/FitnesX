@@ -269,7 +269,7 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
                               height: 15,
                               width: media.width - 80,
                               backgroundColor: Colors.grey.shade100,
-                              foregrondColor: Colors.purple,
+                              foregroundColor: Colors.purple,
                               ratio: 0.96,
                               direction: Axis.horizontal,
                               curve: Curves.fastLinearToSlowEaseIn,

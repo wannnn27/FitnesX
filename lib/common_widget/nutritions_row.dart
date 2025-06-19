@@ -46,7 +46,7 @@ class NutritionRow extends StatelessWidget {
           height: 10,
           width: media.width - 30,
           backgroundColor: Colors.grey.shade100,
-          foregrondColor: Colors.purple,
+          foregroundColor: Colors.purple,
           ratio: val / maxVal,
           direction: Axis.horizontal,
           curve: Curves.fastLinearToSlowEaseIn,

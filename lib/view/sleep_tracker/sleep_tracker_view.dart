@@ -169,8 +169,7 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
                               }).toList();
                             },
                             touchTooltipData: LineTouchTooltipData(
-                              tooltipBgColor: TColor.secondaryColor1,
-                              tooltipRoundedRadius: 5,
+                              getTooltipColor: (spot) => TColor.secondaryColor1,
                               getTooltipItems:
                                   (List<LineBarSpot> lineBarsSpot) {
                                 return lineBarsSpot.map((lineBarSpot) {
@@ -451,7 +450,7 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
     }
 
     return SideTitleWidget(
-      axisSide: meta.axisSide,
+      meta: meta,
       space: 10,
       child: text,
     );

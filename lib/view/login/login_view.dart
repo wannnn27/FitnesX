@@ -1,7 +1,8 @@
 import 'package:fitness/common/colo_extension.dart';
 import 'package:fitness/common_widget/round_button.dart';
 import 'package:fitness/common_widget/round_textfield.dart';
-import 'package:fitness/view/login/complete_profile_view.dart';
+// Tidak perlu mengimpor tampilan tertentu saat menggunakan named routes untuk navigasi dalam file ini
+// import 'package:fitness/view/login/complete_profile_view.dart';
 import 'package:flutter/material.dart';
 
 class LoginView extends StatefulWidget {
@@ -12,7 +13,10 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  bool isCheck = false;
+  // Variabel isCheck sepertinya tidak digunakan dalam implementasi LoginView khusus ini.
+  // Jika itu untuk kotak centang "Ingat Saya", Anda perlu menambahkan elemen UI untuk itu.
+  // bool isCheck = false; 
+
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
@@ -27,11 +31,11 @@ class _LoginViewState extends State<LoginView> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  "Hey there,",
+                  "Hai di sana,", // Diterjemahkan
                   style: TextStyle(color: TColor.gray, fontSize: 16),
                 ),
                 Text(
-                  "Welcome Back",
+                  "Selamat Datang Kembali", // Diterjemahkan
                   style: TextStyle(
                       color: TColor.black,
                       fontSize: 20,
@@ -44,7 +48,7 @@ class _LoginViewState extends State<LoginView> {
                   height: media.width * 0.04,
                 ),
                 const RoundTextField(
-                  hitText: "Email",
+                  hitText: "Email", // Diterjemahkan
                   icon: "assets/img/email.png",
                   keyboardType: TextInputType.emailAddress,
                 ),
@@ -52,11 +56,13 @@ class _LoginViewState extends State<LoginView> {
                   height: media.width * 0.04,
                 ),
                 RoundTextField(
-                  hitText: "Password",
+                  hitText: "Kata Sandi", // Diterjemahkan
                   icon: "assets/img/lock.png",
                   obscureText: true,
                   rigtIcon: TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        // TODO: Implementasi toggle visibilitas kata sandi jika diperlukan
+                      },
                       child: Container(
                           alignment: Alignment.center,
                           width: 20,
@@ -73,7 +79,7 @@ class _LoginViewState extends State<LoginView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Forgot your password?",
+                      "Lupa kata sandi Anda?", // Diterjemahkan
                       style: TextStyle(
                           color: TColor.gray,
                           fontSize: 10,
@@ -81,21 +87,19 @@ class _LoginViewState extends State<LoginView> {
                     ),
                   ],
                 ),
-               const Spacer(),
+                const Spacer(), // Mendorong konten di atas ke atas, dan konten di bawah ke bawah
                 RoundButton(
-                    title: "Login",
+                    title: "Masuk", // Diterjemahkan
                     onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  const CompleteProfileView()));
+                      // Navigasi menggunakan named route ke MainTabView
+                      // Kita menggunakan pushReplacementNamed di sini karena setelah masuk,
+                      // Anda biasanya tidak ingin pengguna kembali ke layar login.
+                      Navigator.pushReplacementNamed(context, '/main_tab');
                     }),
                 SizedBox(
                   height: media.width * 0.04,
                 ),
                 Row(
-                  // crossAxisAlignment: CrossAxisAlignment.,
                   children: [
                     Expanded(
                         child: Container(
@@ -103,7 +107,7 @@ class _LoginViewState extends State<LoginView> {
                       color: TColor.gray.withOpacity(0.5),
                     )),
                     Text(
-                      "  Or  ",
+                      "  Atau  ", // Diterjemahkan
                       style: TextStyle(color: TColor.black, fontSize: 12),
                     ),
                     Expanded(
@@ -120,7 +124,9 @@ class _LoginViewState extends State<LoginView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        // Tangani login Google
+                      },
                       child: Container(
                         width: 50,
                         height: 50,
@@ -144,7 +150,9 @@ class _LoginViewState extends State<LoginView> {
                       width: media.width * 0.04,
                     ),
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        // Tangani login Facebook
+                      },
                       child: Container(
                         width: 50,
                         height: 50,
@@ -171,20 +179,22 @@ class _LoginViewState extends State<LoginView> {
                 ),
                 TextButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    // Navigasi menggunakan named route ke SignupView
+                    // Ini akan mengeluarkan LoginView saat ini dan mendorong SignupView
+                    Navigator.pushReplacementNamed(context, '/signup');
                   },
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        "Don’t have an account yet? ",
+                        "Belum punya akun? ", // Diterjemahkan
                         style: TextStyle(
                           color: TColor.black,
                           fontSize: 14,
                         ),
                       ),
                       Text(
-                        "Register",
+                        "Daftar", // Diterjemahkan
                         style: TextStyle(
                             color: TColor.black,
                             fontSize: 14,
