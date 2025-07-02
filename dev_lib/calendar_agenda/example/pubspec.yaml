@@ -20,5 +20,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  fitness: any
 flutter:
   uses-material-design: true

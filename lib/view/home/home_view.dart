@@ -102,7 +102,7 @@ class _HomeViewState extends State<HomeView> {
             TColor.primaryColor1.withOpacity(0.1),
           ], begin: Alignment.topCenter, end: Alignment.bottomCenter),
         ),
-        dotData: FlDotData(show: false),
+        dotData: const FlDotData(show: false),
         gradient: LinearGradient(
           colors: TColor.primaryG,
         ),
@@ -378,7 +378,7 @@ class _HomeViewState extends State<HomeView> {
                                       List<int> spotIndexes) {
                                 return spotIndexes.map((index) {
                                   return TouchedSpotIndicatorData(
-                                    FlLine(
+                                    const FlLine(
                                       color: Colors.red,
                                     ),
                                     FlDotData(
@@ -415,10 +415,10 @@ class _HomeViewState extends State<HomeView> {
                             lineBarsData: lineBarsData,
                             minY: 0,
                             maxY: 130,
-                            titlesData: FlTitlesData(
+                            titlesData: const FlTitlesData(
                               show: false,
                             ),
-                            gridData: FlGridData(show: false),
+                            gridData: const FlGridData(show: false),
                             borderData: FlBorderData(
                               show: true,
                               border: Border.all(
@@ -830,7 +830,7 @@ class _HomeViewState extends State<HomeView> {
                               List<int> spotIndexes) {
                             return spotIndexes.map((index) {
                               return TouchedSpotIndicatorData(
-                                FlLine(
+                                const FlLine(
                                   color: Colors.transparent,
                                 ),
                                 FlDotData(
@@ -868,8 +868,8 @@ class _HomeViewState extends State<HomeView> {
                         maxY: 110,
                         titlesData: FlTitlesData(
                             show: true,
-                            leftTitles: AxisTitles(),
-                            topTitles: AxisTitles(),
+                            leftTitles: const AxisTitles(),
+                            topTitles: const AxisTitles(),
                             bottomTitles: AxisTitles(
                               sideTitles: bottomTitles,
                             ),
@@ -1008,7 +1008,7 @@ class _HomeViewState extends State<HomeView> {
         ]),
         barWidth: 4,
         isStrokeCapRound: true,
-        dotData: FlDotData(show: false),
+        dotData: const FlDotData(show: false),
         belowBarData: BarAreaData(show: false),
         spots: const [
           FlSpot(1, 35),
@@ -1029,7 +1029,7 @@ class _HomeViewState extends State<HomeView> {
         ]),
         barWidth: 2,
         isStrokeCapRound: true,
-        dotData: FlDotData(show: false),
+        dotData: const FlDotData(show: false),
         belowBarData: BarAreaData(
           show: false,
         ),

@@ -1,8 +1,6 @@
 import 'package:fitness/common/colo_extension.dart';
 import 'package:fitness/common_widget/round_button.dart';
 import 'package:fitness/common_widget/round_textfield.dart';
-import 'package:fitness/view/login/complete_profile_view.dart';
-import 'package:fitness/view/login/login_view.dart';
 // Tidak perlu mengimpor tampilan tertentu saat menggunakan named routes untuk navigasi dalam file ini
 // import 'package:fitness/view/login/complete_profile_view.dart';
 // import 'package:fitness/view/login/login_view.dart';

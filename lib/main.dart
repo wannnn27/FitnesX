@@ -7,6 +7,7 @@ import 'package:fitness/view/login/what_your_goal_view.dart';
 import 'package:fitness/view/login/welcome_view.dart';
 import 'package:flutter/material.dart';
 
+
 import 'common/colo_extension.dart';
 
 void main() {

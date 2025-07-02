@@ -127,7 +127,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                       ),
                       Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             child: RoundTextField(
                               // controller: txtWeight, // Tetapkan pengendali spesifik
                               hitText: "Berat Badan Anda", // Diterjemahkan
@@ -161,7 +161,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                       ),
                       Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             child: RoundTextField(
                               // controller: txtHeight, // Tetapkan pengendali spesifik
                               hitText: "Tinggi Badan Anda", // Diterjemahkan

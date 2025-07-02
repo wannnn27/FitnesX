@@ -57,7 +57,7 @@ class _OnBoardingViewState extends State<OnBoardingView> {
   Widget build(BuildContext context) {
     // Dapatkan ukuran layar
     final screenSize = MediaQuery.of(context).size;
-    final isWeb = kIsWeb;
+    const isWeb = kIsWeb;
     
     // Sesuaikan ukuran untuk web
     double buttonSize = isWeb ? 80 : 60;

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:readmore/readmore.dart';
 
 import '../../common_widget/food_step_detail_row.dart';
-import 'meal_schedule_view.dart';
 
 class FoodInfoDetailsView extends StatefulWidget {
   final Map mObj;

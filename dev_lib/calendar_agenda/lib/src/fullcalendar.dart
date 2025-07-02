@@ -19,7 +19,7 @@ class FullCalendar extends StatefulWidget {
   final List<String>? events;
   final Function onDateChange;
 
-  FullCalendar({
+  const FullCalendar({
     Key? key,
     this.endDate,
     required this.startDate,
@@ -49,6 +49,7 @@ class _FullCalendarState extends State<FullCalendar> {
 
   late PageController _horizontalScroll;
 
+  @override
   void initState() {
     setState(() {
       startDate = DateTime.parse(
@@ -74,7 +75,7 @@ class _FullCalendarState extends State<FullCalendar> {
 
     DateTime lastDate = DateTime.parse(
             "${partsEnd.first}-${(int.parse(partsEnd[1]) + 1).toString().padLeft(2, '0')}-01 23:00:00.000")
-        .subtract(Duration(days: 1));
+        .subtract(const Duration(days: 1));
 
     double width = MediaQuery.of(context).size.width - (2 * widget.padding!);
 
@@ -87,7 +88,7 @@ class _FullCalendarState extends State<FullCalendar> {
       DateTime newDate = DateTime.parse("${referenceParts.first} 12:00:00.000");
       dates.add(newDate);
 
-      referenceDate = newDate.add(Duration(days: 1));
+      referenceDate = newDate.add(const Duration(days: 1));
     }
 
     if (firstDate.year == lastDate.year && firstDate.month == lastDate.month) {
@@ -106,15 +107,15 @@ class _FullCalendarState extends State<FullCalendar> {
 
       months.sort((b, a) => a!.compareTo(b!));
 
-      final _index = months.indexWhere((element) =>
+      final index = months.indexWhere((element) =>
           element!.month == widget.selectedDate!.month &&
           element.year == widget.selectedDate!.year);
 
-      _initialPage = _index;
+      _initialPage = index;
       _horizontalScroll = PageController(initialPage: _initialPage);
 
       return Container(
-        padding: EdgeInsets.fromLTRB(25, 10.0, 25, 20.0),
+        padding: const EdgeInsets.fromLTRB(25, 10.0, 25, 20.0),
         child: widget.calendarScroll == FullCalendarScroll.horizontal
             ? Stack(
                 children: [
@@ -123,7 +124,7 @@ class _FullCalendarState extends State<FullCalendar> {
                     child: Center(child: widget.calendarBackground),
                   ),
                   PageView.builder(
-                    physics: BouncingScrollPhysics(),
+                    physics: const BouncingScrollPhysics(),
                     controller: _horizontalScroll,
                     reverse: true,
                     scrollDirection: Axis.horizontal,
@@ -160,7 +161,7 @@ class _FullCalendarState extends State<FullCalendar> {
                               curve: Curves.ease,
                             );
                           },
-                          icon: Icon(Icons.arrow_back),
+                          icon: const Icon(Icons.arrow_back),
                         ),
                         IconButton(
                           onPressed: () {
@@ -169,7 +170,7 @@ class _FullCalendarState extends State<FullCalendar> {
                               curve: Curves.ease,
                             );
                           },
-                          icon: Icon(Icons.arrow_forward),
+                          icon: const Icon(Icons.arrow_forward),
                         ),
                       ],
                     ),
@@ -185,10 +186,10 @@ class _FullCalendarState extends State<FullCalendar> {
                     ),
                   ),
                   ScrollablePositionedList.builder(
-                    initialScrollIndex: _index,
+                    initialScrollIndex: index,
                     itemCount: months.length,
                     reverse: true,
-                    physics: BouncingScrollPhysics(),
+                    physics: const BouncingScrollPhysics(),
                     itemBuilder: (context, index) {
                       DateTime? date = months[index];
                       List<DateTime?> daysOfMonth = [];
@@ -219,9 +220,9 @@ class _FullCalendarState extends State<FullCalendar> {
     for (var day = 12; day <= 18; day++) {
       weekday == WeekDay.long
           ? daysNames.add(DateFormat.EEEE(locale.toString())
-              .format(DateTime.parse('1970-01-' + day.toString())))
+              .format(DateTime.parse('1970-01-$day')))
           : daysNames.add(DateFormat.E(locale.toString())
-              .format(DateTime.parse('1970-01-' + day.toString())));
+              .format(DateTime.parse('1970-01-$day')));
     }
 
     return Row(
@@ -244,7 +245,7 @@ class _FullCalendarState extends State<FullCalendar> {
       alignment: Alignment.center,
       child: Text(
         text,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 12.0,
           fontWeight: FontWeight.w400,
         ),
@@ -271,7 +272,7 @@ class _FullCalendarState extends State<FullCalendar> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 5.0,
               ),
               Padding(
@@ -296,7 +297,7 @@ class _FullCalendarState extends State<FullCalendar> {
                           ? widget.dateSelectedColor
                           : widget.dateSelectedBg,
                     )
-                  : SizedBox(height: 5.0),
+                  : const SizedBox(height: 5.0),
             ],
           ),
         ),
@@ -307,7 +308,7 @@ class _FullCalendarState extends State<FullCalendar> {
   Widget month(List dates, double width, String? locale, WeekDay? weekday) {
     DateTime first = dates.first;
     while (DateFormat("E").format(dates.first) != "Mon") {
-      dates.add(dates.first.subtract(Duration(days: 1)));
+      dates.add(dates.first.subtract(const Duration(days: 1)));
 
       dates.sort();
     }
@@ -337,9 +338,9 @@ class _FullCalendarState extends State<FullCalendar> {
             width: MediaQuery.of(context).size.width - 2 * widget.padding!,
             child: GridView.builder(
               itemCount: dates.length,
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               gridDelegate:
-                  SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7),
+                  const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7),
               itemBuilder: (context, index) {
                 DateTime date = dates[index];
 

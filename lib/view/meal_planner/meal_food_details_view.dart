@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import '../../common/colo_extension.dart';
 import '../../common_widget/meal_category_cell.dart';
 import '../../common_widget/popular_meal_row.dart';
-import '../../common_widget/today_meal_row.dart';
 import 'food_info_details_view.dart';
 
 class MealFoodDetailsView extends StatefulWidget {
