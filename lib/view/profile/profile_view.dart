@@ -5,6 +5,7 @@ import '../../common_widget/round_button.dart';
 import '../../common_widget/setting_row.dart';
 import '../../common_widget/title_subtitle_cell.dart';
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
+import 'edit_profile_view.dart'; // Import the edit profile page
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -15,6 +16,14 @@ class ProfileView extends StatefulWidget {
 
 class _ProfileViewState extends State<ProfileView> {
   bool positive = false;
+
+  // Profile data - now can be updated
+  String userName = "Adi Arwan Syah";
+  String userProgram = "Lose a Fat Program";
+  String userHeight = "165cm";
+  String userWeight = "65kg";
+  String userAge = "22yo";
+  String userImage = "assets/img/u2.png";
 
   List accountArr = [
     {"image": "assets/img/p_personal.png", "name": "Personal Data", "tag": "1"},
@@ -36,6 +45,7 @@ class _ProfileViewState extends State<ProfileView> {
     {"image": "assets/img/p_privacy.png", "name": "Privacy Policy", "tag": "6"},
     {"image": "assets/img/p_setting.png", "name": "Setting", "tag": "7"},
   ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,7 +92,7 @@ class _ProfileViewState extends State<ProfileView> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(30),
                     child: Image.asset(
-                      "assets/img/u2.png",
+                      userImage,
                       width: 50,
                       height: 50,
                       fit: BoxFit.cover,
@@ -96,7 +106,7 @@ class _ProfileViewState extends State<ProfileView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Adi Arwan Syah",
+                          userName,
                           style: TextStyle(
                             color: TColor.black,
                             fontSize: 14,
@@ -104,7 +114,7 @@ class _ProfileViewState extends State<ProfileView> {
                           ),
                         ),
                         Text(
-                          "Lose a Fat Program",
+                          userProgram,
                           style: TextStyle(
                             color: TColor.gray,
                             fontSize: 12,
@@ -121,13 +131,33 @@ class _ProfileViewState extends State<ProfileView> {
                       type: RoundButtonType.bgGradient,
                       fontSize: 12,
                       fontWeight: FontWeight.w400,
-                      onPressed: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => const ActivityTrackerView(),
-                        //   ),
-                        // );
+                      onPressed: () async {
+                        // Navigate to edit profile page
+                        final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditProfileView(
+                              currentName: userName,
+                              currentProgram: userProgram,
+                              currentHeight: userHeight,
+                              currentWeight: userWeight,
+                              currentAge: userAge,
+                              currentImage: userImage,
+                            ),
+                          ),
+                        );
+                        
+                        // Update profile data if changes were made
+                        if (result != null && result is Map<String, String>) {
+                          setState(() {
+                            userName = result['name'] ?? userName;
+                            userProgram = result['program'] ?? userProgram;
+                            userHeight = result['height'] ?? userHeight;
+                            userWeight = result['weight'] ?? userWeight;
+                            userAge = result['age'] ?? userAge;
+                            userImage = result['image'] ?? userImage;
+                          });
+                        }
                       },
                     ),
                   )
@@ -136,29 +166,29 @@ class _ProfileViewState extends State<ProfileView> {
               const SizedBox(
                 height: 15,
               ),
-              const Row(
+              Row(
                 children: [
                   Expanded(
                     child: TitleSubtitleCell(
-                      title: "165cm",
+                      title: userHeight,
                       subtitle: "Height",
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 15,
                   ),
                   Expanded(
                     child: TitleSubtitleCell(
-                      title: "65kg",
+                      title: userWeight,
                       subtitle: "Weight",
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 15,
                   ),
                   Expanded(
                     child: TitleSubtitleCell(
-                      title: "22yo",
+                      title: userAge,
                       subtitle: "Age",
                     ),
                   ),

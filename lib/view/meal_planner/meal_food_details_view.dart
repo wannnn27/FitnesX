@@ -24,7 +24,7 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
       "image": "assets/img/c_1.png",
     },
     {
-      "name": "Kue", // Diterjemahkan
+      "name": "Kue", 
       "image": "assets/img/c_2.png",
     },
     {
@@ -32,7 +32,7 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
       "image": "assets/img/c_3.png",
     },
     {
-      "name": "Smoothie", // Diterjemahkan
+      "name": "Smoothie", 
       "image": "assets/img/c_4.png",
     },
     {
@@ -40,7 +40,7 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
       "image": "assets/img/c_1.png",
     },
     {
-      "name": "Kue", // Diterjemahkan
+      "name": "Kue", 
       "image": "assets/img/c_2.png",
     },
     {
@@ -48,43 +48,43 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
       "image": "assets/img/c_3.png",
     },
     {
-      "name": "Smoothie", // Diterjemahkan
+      "name": "Smoothie", 
       "image": "assets/img/c_4.png",
     },
   ];
 
   List popularArr = [
     {
-      "name": "Pancake Blueberry", // Diterjemahkan
+      "name": "Pancake Blueberry", 
       "image": "assets/img/f_1.png",
       "b_image": "assets/img/pancake_1.png",
-      "size": "Sedang", // Diterjemahkan
-      "time": "30 menit", // Diterjemahkan
+      "size": "Sedang", 
+      "time": "30 menit", 
       "kcal": "230kKal"
     },
     {
-      "name": "Nigiri Salmon", // Diterjemahkan
+      "name": "Nigiri Salmon", 
       "image": "assets/img/f_2.png",
       "b_image": "assets/img/nigiri.png",
-      "size": "Sedang", // Diterjemahkan
-      "time": "20 menit", // Diterjemahkan
+      "size": "Sedang", 
+      "time": "20 menit", 
       "kcal": "120kKal"
     },
   ];
 
   List recommendArr = [
     {
-      "name": "Pancake Madu", // Diterjemahkan
+      "name": "Pancake Madu", 
       "image": "assets/img/rd_1.png",
-      "size": "Mudah", // Diterjemahkan
-      "time": "30 menit", // Diterjemahkan
+      "size": "Mudah", 
+      "time": "30 menit", 
       "kcal": "180kKal"
     },
     {
-      "name": "Roti Canai", // Diterjemahkan
+      "name": "Roti Canai", 
       "image": "assets/img/m_4.png",
-      "size": "Mudah", // Diterjemahkan
-      "time": "20 menit", // Diterjemahkan
+      "size": "Mudah", 
+      "time": "20 menit", 
       "kcal": "230kKal"
     },
   ];
@@ -174,7 +174,7 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
                           width: 25,
                           height: 25,
                         ),
-                        hintText: "Cari Pancake"), // Diterjemahkan
+                        hintText: "Cari Pancake"), 
                   )),
                   Container(
                     margin: const EdgeInsets.symmetric(horizontal: 8),
@@ -231,7 +231,7 @@ class _MealFoodDetailsViewState extends State<MealFoodDetailsView> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Text(
-                "Rekomendasi\nuntuk Diet", // Diterjemahkan
+                "Rekomendasi\nuntuk Diet", 
                 style: TextStyle(
                     color: TColor.black,
                     fontSize: 16,

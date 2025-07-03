@@ -182,14 +182,14 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    widget.dObj["name"].toString(),
+                                    widget.dObj["nama"].toString(),
                                     style: TextStyle(
                                         color: TColor.black,
                                         fontSize: 16,
                                         fontWeight: FontWeight.w700),
                                   ),
                                   Text(
-                                    "oleh James Ruth", // Diterjemahkan
+                                    "oleh Adi Arwan Syah", // Diterjemahkan
                                     style: TextStyle(
                                         color: TColor.gray, fontSize: 12),
                                   ),
@@ -214,7 +214,7 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15),
                         child: Text(
-                          "Nutrisi", // Diterjemahkan
+                          "Nutrisi", 
                           style: TextStyle(
                               color: TColor.black,
                               fontSize: 16,
@@ -273,7 +273,7 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15),
                         child: Text(
-                          "Deskripsi", // Diterjemahkan
+                          "Deskripsi", 
                           style: TextStyle(
                               color: TColor.black,
                               fontSize: 16,
@@ -290,8 +290,8 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                           trimLines: 4,
                           colorClickableText: TColor.black,
                           trimMode: TrimMode.Line,
-                          trimCollapsedText: ' Baca Selengkapnya ...', // Diterjemahkan
-                          trimExpandedText: ' Baca Lebih Sedikit', // Diterjemahkan
+                          trimCollapsedText: ' Baca Selengkapnya ...', 
+                          trimExpandedText: ' Baca Lebih Sedikit', 
                           style: TextStyle(
                             color: TColor.gray,
                             fontSize: 12,
@@ -309,7 +309,7 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Bahan yang Anda\nAkan Butuhkan", // Diterjemahkan
+                              "Bahan yang Anda\nAkan Butuhkan", 
                               style: TextStyle(
                                   color: TColor.black,
                                   fontSize: 16,
@@ -318,7 +318,7 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                             TextButton(
                               onPressed: () {},
                               child: Text(
-                                "${ingredientsArr.length} Item", // Diterjemahkan
+                                "${ingredientsArr.length} Item", 
                                 style:
                                     TextStyle(color: TColor.gray, fontSize: 12),
                               ),
@@ -382,7 +382,7 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Langkah demi Langkah", // Diterjemahkan
+                              "Langkah demi Langkah", 
                               style: TextStyle(
                                   color: TColor.black,
                                   fontSize: 16,
@@ -391,7 +391,7 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                             TextButton(
                               onPressed: () {},
                               child: Text(
-                                "${stepArr.length} Langkah", // Diterjemahkan
+                                "${stepArr.length} Langkah", 
                                 style:
                                     TextStyle(color: TColor.gray, fontSize: 12),
                               ),
@@ -427,7 +427,7 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15),
                         child: RoundButton(
-                            title: "Tambahkan ke Makanan ${widget.mObj["name"]}", // Diterjemahkan
+                            title: "Tambahkan ke Makanan ${widget.mObj["name"]}", 
                             onPressed: () {}),
                       ),
                     ],

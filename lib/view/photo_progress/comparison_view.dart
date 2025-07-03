@@ -73,8 +73,8 @@ class _ComparisonViewState extends State<ComparisonView> {
           children: [
             IconTitleNextRow(
                 icon: "assets/img/date.png",
-                title: "Select Month 1",
-                time: "May",
+                title: "Pilih Bulan  1",
+                time: "Mei",
                 onPressed: () {},
                 color: TColor.lightGray),
             const SizedBox(
@@ -82,13 +82,13 @@ class _ComparisonViewState extends State<ComparisonView> {
             ),
             IconTitleNextRow(
                 icon: "assets/img/date.png",
-                title: "Select Month 2",
-                time: "select Month",
+                title: "Pilih Bulan 2",
+                time: "Pilih Bulan",
                 onPressed: () {},
                 color: TColor.lightGray),
             const Spacer(),
             RoundButton(
-                title: "Compare",
+                title: "Bandingkan",
                 onPressed: () {
                   Navigator.push(
                     context,
