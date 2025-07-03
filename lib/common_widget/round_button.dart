@@ -18,7 +18,7 @@ class RoundButton extends StatelessWidget {
       this.type = RoundButtonType.bgGradient,
       this.fontSize = 16,
       this.elevation = 1,
-      this.fontWeight: FontWeight.w700,
+      this.fontWeight = FontWeight.w700,
       required this.onPressed});
 
   @override

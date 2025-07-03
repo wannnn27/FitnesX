@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart'; // WAJIB: file ini dihasilkan oleh `flutterfire configure`
+import 'firebase_options.dart'; // WAJIB: hasil dari `flutterfire configure`
 
 import 'common/colo_extension.dart';
 import 'package:fitness/view/main_tab/main_tab_view.dart';
@@ -31,9 +31,7 @@ class MyApp extends StatelessWidget {
         primaryColor: TColor.primaryColor1,
         fontFamily: "Poppins",
       ),
-      // Set initial route
       initialRoute: '/',
-      // Define all routes
       routes: {
         '/': (context) => const OnBoardingView(),
         '/signup': (context) => const SignupView(),
@@ -43,7 +41,6 @@ class MyApp extends StatelessWidget {
         '/welcome': (context) => const WelcomeView(),
         '/main_tab': (context) => const MainTabView(),
       },
-      // Handle undefined routes
       onUnknownRoute: (settings) {
         return MaterialPageRoute(
           builder: (context) => const OnBoardingView(),

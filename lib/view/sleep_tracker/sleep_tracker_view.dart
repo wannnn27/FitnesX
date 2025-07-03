@@ -151,7 +151,7 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
                                 List<int> spotIndexes) {
                               return spotIndexes.map((index) {
                                 return TouchedSpotIndicatorData(
-                                  FlLine(
+                                  const FlLine(
                                     color: Colors.transparent,
                                   ),
                                   FlDotData(
@@ -190,8 +190,8 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
                           maxY: 10.01,
                           titlesData: FlTitlesData(
                               show: true,
-                              leftTitles: AxisTitles(),
-                              topTitles: AxisTitles(),
+                              leftTitles: const AxisTitles(),
+                              topTitles: const AxisTitles(),
                               bottomTitles: AxisTitles(
                                 sideTitles: bottomTitles,
                               ),
@@ -350,7 +350,7 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
         ]),
         barWidth: 2,
         isStrokeCapRound: true,
-        dotData: FlDotData(show: false),
+        dotData: const FlDotData(show: false),
         belowBarData: BarAreaData(
           show: true,
           gradient: LinearGradient(colors: [

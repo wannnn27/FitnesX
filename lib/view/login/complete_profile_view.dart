@@ -158,7 +158,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                       SizedBox(height: media.width * 0.04),
                       Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             child: RoundTextField(
                               controller: txtWeight,
                               hitText: "Berat Badan Anda",
@@ -187,7 +187,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                       SizedBox(height: media.width * 0.04),
                       Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             child: RoundTextField(
                               controller: txtHeight,
                               hitText: "Tinggi Badan Anda",
