@@ -28,8 +28,8 @@ class _ComparisonViewState extends State<ComparisonView> {
       initialDate: initialDate,
       firstDate: firstDate,
       lastDate: lastDate,
-      helpText: 'Select Month',
-      fieldHintText: 'Month/Year',
+      helpText: 'Pilih Bulan',
+      fieldHintText: 'MM/YYYY',
     );
 
     if (picked != null) {
@@ -72,7 +72,7 @@ class _ComparisonViewState extends State<ComparisonView> {
           ),
         ),
         title: Text(
-          "Comparison",
+          "Perbandingan",
           style: TextStyle(
             color: TColor.black,
             fontSize: 16,
@@ -108,26 +108,26 @@ class _ComparisonViewState extends State<ComparisonView> {
           children: [
             IconTitleNextRow(
               icon: "assets/img/date.png",
-              title: "Select Month 1",
+              title: "Pilih Bulan 1",
               time: selectedDate1 != null
-                  ? DateFormat('MMMM yyyy').format(selectedDate1!)
-                  : "Select Month",
+                  ? DateFormat('MMMM yyyy', 'id').format(selectedDate1!)
+                  : "Pilih Bulan",
               onPressed: () => selectMonth(1),
               color: TColor.lightGray,
             ),
             const SizedBox(height: 15),
             IconTitleNextRow(
               icon: "assets/img/date.png",
-              title: "Select Month 2",
+              title: "Pilih Bulan 2",
               time: selectedDate2 != null
-                  ? DateFormat('MMMM yyyy').format(selectedDate2!)
-                  : "Select Month",
+                  ? DateFormat('MMMM yyyy', 'id').format(selectedDate2!)
+                  : "Pilih Bulan",
               onPressed: () => selectMonth(2),
               color: TColor.lightGray,
             ),
             const Spacer(),
             RoundButton(
-              title: "Compare",
+              title: "Bandingkan",
               onPressed: () {
                 if (selectedDate1 != null && selectedDate2 != null) {
                   Navigator.push(
@@ -141,7 +141,7 @@ class _ComparisonViewState extends State<ComparisonView> {
                   );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Please select both months")),
+                    const SnackBar(content: Text("Silakan pilih kedua bulan")),
                   );
                 }
               },

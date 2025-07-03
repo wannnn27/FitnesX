@@ -20,14 +20,14 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   List lastWorkoutArr = [
     {
-      "name": "Full Body Workout",
+      "name": "Latihan Seluruh Tubuh",
       "image": "assets/img/Workout1.png",
       "kcal": "180",
       "time": "20",
       "progress": 0.3
     },
     {
-      "name": "Lower Body Workout",
+      "name": "Latihan Tubuh Bagian Bawah",
       "image": "assets/img/Workout2.png",
       "kcal": "200",
       "time": "30",
@@ -128,7 +128,7 @@ class _HomeViewState extends State<HomeView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Welcome Back,",
+                          "Selamat Datang Kembali,",
                           style: TextStyle(color: TColor.gray, fontSize: 12),
                         ),
                         Text(
@@ -190,7 +190,7 @@ class _HomeViewState extends State<HomeView> {
                                     fontWeight: FontWeight.w700),
                               ),
                               Text(
-                                "You have a normal weight",
+                                "Berat badan Anda normal",
                                 style: TextStyle(
                                     color: TColor.white.withOpacity(0.7),
                                     fontSize: 12),
@@ -202,7 +202,7 @@ class _HomeViewState extends State<HomeView> {
                                   width: 120,
                                   height: 35,
                                   child: RoundButton(
-                                      title: "View More",
+                                      title: "Lihat Selengkapnya",
                                       type: RoundButtonType.bgSGradient,
                                       fontSize: 12,
                                       fontWeight: FontWeight.w400,
@@ -246,7 +246,7 @@ class _HomeViewState extends State<HomeView> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Today Target",
+                        "Target Hari Ini",
                         style: TextStyle(
                             color: TColor.black,
                             fontSize: 14,
@@ -256,7 +256,7 @@ class _HomeViewState extends State<HomeView> {
                         width: 70,
                         height: 25,
                         child: RoundButton(
-                          title: "Check",
+                          title: "Cek",
                           type: RoundButtonType.bgGradient,
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
@@ -278,7 +278,7 @@ class _HomeViewState extends State<HomeView> {
                   height: media.width * 0.05,
                 ),
                 Text(
-                  "Activity Status",
+                  "Status Aktivitas",
                   style: TextStyle(
                       color: TColor.black,
                       fontSize: 16,
@@ -308,7 +308,7 @@ class _HomeViewState extends State<HomeView> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Heart Rate",
+                                "Detak Jantung",
                                 style: TextStyle(
                                     color: TColor.black,
                                     fontSize: 16,
@@ -401,7 +401,7 @@ class _HomeViewState extends State<HomeView> {
                                     (List<LineBarSpot> lineBarsSpot) {
                                   return lineBarsSpot.map((lineBarSpot) {
                                     return LineTooltipItem(
-                                      "${lineBarSpot.x.toInt()} mins ago",
+                                      "${lineBarSpot.x.toInt()} menit yang lalu",
                                       const TextStyle(
                                         color: Colors.white,
                                         fontSize: 10,
@@ -472,7 +472,7 @@ class _HomeViewState extends State<HomeView> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Water Intake",
+                                  "Asupan Air",
                                   style: TextStyle(
                                       color: TColor.black,
                                       fontSize: 12,
@@ -489,7 +489,7 @@ class _HomeViewState extends State<HomeView> {
                                             0, 0, bounds.width, bounds.height));
                                   },
                                   child: Text(
-                                    "4 Liters",
+                                    "4 Liter",
                                     style: TextStyle(
                                         color: TColor.white.withOpacity(0.7),
                                         fontWeight: FontWeight.w700,
@@ -500,7 +500,7 @@ class _HomeViewState extends State<HomeView> {
                                   height: 10,
                                 ),
                                 Text(
-                                  "Real time updates",
+                                  "Pembaruan",
                                   style: TextStyle(
                                     color: TColor.gray,
                                     fontSize: 12,
@@ -618,7 +618,7 @@ class _HomeViewState extends State<HomeView> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Sleep",
+                                  "Tidur",
                                   style: TextStyle(
                                       color: TColor.black,
                                       fontSize: 12,
@@ -635,7 +635,7 @@ class _HomeViewState extends State<HomeView> {
                                             0, 0, bounds.width, bounds.height));
                                   },
                                   child: Text(
-                                    "8h 20m",
+                                    "8j 20m",
                                     style: TextStyle(
                                         color: TColor.white.withOpacity(0.7),
                                         fontWeight: FontWeight.w700,
@@ -666,7 +666,7 @@ class _HomeViewState extends State<HomeView> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Calories",
+                                  "Kalori",
                                   style: TextStyle(
                                       color: TColor.black,
                                       fontSize: 12,
@@ -683,7 +683,7 @@ class _HomeViewState extends State<HomeView> {
                                             0, 0, bounds.width, bounds.height));
                                   },
                                   child: Text(
-                                    "760 kCal",
+                                    "760 kKal",
                                     style: TextStyle(
                                         color: TColor.white.withOpacity(0.7),
                                         fontWeight: FontWeight.w700,
@@ -711,7 +711,7 @@ class _HomeViewState extends State<HomeView> {
                                           ),
                                           child: FittedBox(
                                             child: Text(
-                                              "230kCal\nleft",
+                                              "230kKal\ntersisa",
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
                                                   color: TColor.white,
@@ -744,7 +744,7 @@ class _HomeViewState extends State<HomeView> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Workout Progress",
+                      "Perkembangan Latihan",
                       style: TextStyle(
                           color: TColor.black,
                           fontSize: 16,
@@ -759,7 +759,7 @@ class _HomeViewState extends State<HomeView> {
                         ),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton(
-                            items: ["Weekly", "Monthly"]
+                            items: ["Mingguan", "Bulanan"]
                                 .map((name) => DropdownMenuItem(
                                       value: name,
                                       child: Text(
@@ -852,7 +852,7 @@ class _HomeViewState extends State<HomeView> {
                             getTooltipItems: (List<LineBarSpot> lineBarsSpot) {
                               return lineBarsSpot.map((lineBarSpot) {
                                 return LineTooltipItem(
-                                  "${lineBarSpot.x.toInt()} mins ago",
+                                  "${lineBarSpot.x.toInt()} menit yang lalu",
                                   const TextStyle(
                                     color: Colors.white,
                                     fontSize: 10,
@@ -912,7 +912,7 @@ class _HomeViewState extends State<HomeView> {
                     TextButton(
                       onPressed: () {},
                       child: Text(
-                        "See More",
+                        "Lihat Selengkapnya",
                         style: TextStyle(
                             color: TColor.gray,
                             fontSize: 14,
@@ -1099,25 +1099,25 @@ class _HomeViewState extends State<HomeView> {
     Widget text;
     switch (value.toInt()) {
       case 1:
-        text = Text('Sun', style: style);
+        text = Text('Mingg', style: style);
         break;
       case 2:
-        text = Text('Mon', style: style);
+        text = Text('Sen', style: style);
         break;
       case 3:
-        text = Text('Tue', style: style);
+        text = Text('Sel', style: style);
         break;
       case 4:
-        text = Text('Wed', style: style);
+        text = Text('Rab', style: style);
         break;
       case 5:
-        text = Text('Thu', style: style);
+        text = Text('Kam', style: style);
         break;
       case 6:
-        text = Text('Fri', style: style);
+        text = Text('Jum', style: style);
         break;
       case 7:
-        text = Text('Sat', style: style);
+        text = Text('Sab', style: style);
         break;
       default:
         text = const Text('');

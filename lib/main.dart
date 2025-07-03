@@ -1,11 +1,8 @@
-<<<<<<< Updated upstream
-=======
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart'; // WAJIB: hasil dari `flutterfire configure`
 
 import 'common/colo_extension.dart';
->>>>>>> Stashed changes
 import 'package:fitness/view/main_tab/main_tab_view.dart';
 import 'package:fitness/view/on_boarding/on_boarding_view.dart';
 import 'package:fitness/view/login/signup_view.dart';
@@ -13,12 +10,12 @@ import 'package:fitness/view/login/login_view.dart';
 import 'package:fitness/view/login/complete_profile_view.dart';
 import 'package:fitness/view/login/what_your_goal_view.dart';
 import 'package:fitness/view/login/welcome_view.dart';
-import 'package:flutter/material.dart';
 
-
-import 'common/colo_extension.dart';
-
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -32,7 +29,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: TColor.primaryColor1,
-        fontFamily: "Poppins"
+        fontFamily: "Poppins",
       ),
       initialRoute: '/',
       routes: {

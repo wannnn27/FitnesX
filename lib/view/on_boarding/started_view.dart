@@ -41,7 +41,7 @@ class _StartedViewState extends State<StartedView> {
                     fontWeight: FontWeight.w700),
               ),
               Text(
-                "Everybody Can Train",
+                "Siapapun Bisa Mencoba",
                 style: TextStyle(
                   color: TColor.gray,
                   fontSize: 18,
@@ -52,7 +52,7 @@ class _StartedViewState extends State<StartedView> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: RoundButton(
-                    title: "Get Started",
+                    title: "Mulai Sekarang",
                     type: isChangeColor
                         ? RoundButtonType.textGradient
                         : RoundButtonType.bgGradient,

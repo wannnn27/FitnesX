@@ -1,8 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fitness/common/colo_extension.dart';
 import 'package:fitness/common_widget/round_button.dart';
 import 'package:fitness/common_widget/round_textfield.dart';
-// Tidak perlu mengimpor tampilan tertentu saat menggunakan named routes untuk navigasi dalam file ini
-// import 'package:fitness/view/login/complete_profile_view.dart';
 import 'package:flutter/material.dart';
 
 class LoginView extends StatefulWidget {
@@ -13,199 +12,209 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  // Variabel isCheck sepertinya tidak digunakan dalam implementasi LoginView khusus ini.
-  // Jika itu untuk kotak centang "Ingat Saya", Anda perlu menambahkan elemen UI untuk itu.
-  // bool isCheck = false; 
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  bool _isLoading = false;
+  String _errorMessage = '';
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loginUser() async {
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      setState(() {
+        _errorMessage = "Email dan Kata Sandi harus diisi.";
+      });
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = '';
+    });
+
+    try {
+      await _auth.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/main_tab');
+      }
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        if (e.code == 'user-not-found' ||
+            e.code == 'wrong-password' ||
+            e.code == 'invalid-credential') {
+          _errorMessage = 'Email atau Kata Sandi yang Anda masukkan salah.';
+        } else {
+          _errorMessage = e.message ?? 'Terjadi kesalahan saat login.';
+        }
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = "Terjadi kesalahan yang tidak diketahui: ${e.toString()}";
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Widget _buildGoogleLoginButton() {
+    return InkWell(
+      onTap: () {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Google login belum diimplementasi.")),
+        );
+      },
+      child: Container(
+        height: 45,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: TColor.gray),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset("assets/img/google.png", width: 20, height: 20),
+            const SizedBox(width: 8),
+            const Text("Masuk dengan Google"),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: TColor.white,
-      body: SingleChildScrollView(
-        child: SafeArea(
+      body: SafeArea(
+        child: SingleChildScrollView(
           child: Container(
-            height: media.height * 0.9,
             padding: const EdgeInsets.symmetric(horizontal: 20),
+            constraints: BoxConstraints(minHeight: media.height),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                const SizedBox(height: 60),
                 Text(
-                  "Hai di sana,", // Diterjemahkan
+                  "Hai",
                   style: TextStyle(color: TColor.gray, fontSize: 16),
                 ),
+                const SizedBox(height: 8),
                 Text(
-                  "Selamat Datang Kembali", // Diterjemahkan
+                  "Selamat Datang Kembali",
                   style: TextStyle(
                       color: TColor.black,
                       fontSize: 20,
                       fontWeight: FontWeight.w700),
                 ),
-                SizedBox(
-                  height: media.width * 0.05,
-                ),
-                SizedBox(
-                  height: media.width * 0.04,
-                ),
-                const RoundTextField(
-                  hitText: "Email", // Diterjemahkan
+                const SizedBox(height: 40),
+
+                RoundTextField(
+                  controller: _emailController,
+                  hitText: "Email",
                   icon: "assets/img/email.png",
                   keyboardType: TextInputType.emailAddress,
                 ),
-                SizedBox(
-                  height: media.width * 0.04,
-                ),
+                const SizedBox(height: 20),
+
                 RoundTextField(
-                  hitText: "Kata Sandi", // Diterjemahkan
+                  controller: _passwordController,
+                  hitText: "Kata Sandi",
                   icon: "assets/img/lock.png",
                   obscureText: true,
-                  rigtIcon: TextButton(
-                      onPressed: () {
-                        // TODO: Implementasi toggle visibilitas kata sandi jika diperlukan
-                      },
-                      child: Container(
-                          alignment: Alignment.center,
-                          width: 20,
-                          height: 20,
-                          child: Image.asset(
-                            "assets/img/show_password.png",
-                            width: 20,
-                            height: 20,
-                            fit: BoxFit.contain,
-                            color: TColor.gray,
-                          ))),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Lupa kata sandi Anda?", // Diterjemahkan
-                      style: TextStyle(
-                          color: TColor.gray,
-                          fontSize: 10,
-                          decoration: TextDecoration.underline),
+                const SizedBox(height: 12),
+
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    "Lupa kata sandi?",
+                    style: TextStyle(
+                      color: TColor.gray,
+                      fontSize: 12,
+                      decoration: TextDecoration.underline,
                     ),
-                  ],
+                  ),
                 ),
-                const Spacer(), // Mendorong konten di atas ke atas, dan konten di bawah ke bawah
+
+                if (_errorMessage.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 15.0),
+                    child: Text(
+                      _errorMessage,
+                      style: const TextStyle(color: Colors.red, fontSize: 14),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+
+                const SizedBox(height: 30),
+
                 RoundButton(
-                    title: "Masuk", // Diterjemahkan
-                    onPressed: () {
-                      // Navigasi menggunakan named route ke MainTabView
-                      // Kita menggunakan pushReplacementNamed di sini karena setelah masuk,
-                      // Anda biasanya tidak ingin pengguna kembali ke layar login.
-                      Navigator.pushReplacementNamed(context, '/main_tab');
-                    }),
-                SizedBox(
-                  height: media.width * 0.04,
+                  title: _isLoading ? "Memproses..." : "Masuk",
+                  onPressed: _isLoading ? () {} : _loginUser,
                 ),
+
+                const SizedBox(height: 25),
+
                 Row(
                   children: [
-                    Expanded(
-                        child: Container(
-                      height: 1,
-                      color: TColor.gray.withOpacity(0.5),
-                    )),
-                    Text(
-                      "  Atau  ", // Diterjemahkan
-                      style: TextStyle(color: TColor.black, fontSize: 12),
-                    ),
-                    Expanded(
-                        child: Container(
-                      height: 1,
-                      color: TColor.gray.withOpacity(0.5),
-                    )),
-                  ],
-                ),
-                SizedBox(
-                  height: media.width * 0.04,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        // Tangani login Google
-                      },
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: TColor.white,
-                          border: Border.all(
-                            width: 1,
-                            color: TColor.gray.withOpacity(0.4),
-                          ),
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Image.asset(
-                          "assets/img/google.png",
-                          width: 20,
-                          height: 20,
-                        ),
+                    const Expanded(child: Divider()),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Text(
+                        "Atau",
+                        style: TextStyle(color: TColor.gray, fontSize: 14),
                       ),
                     ),
-                    SizedBox(
-                      width: media.width * 0.04,
+                    const Expanded(child: Divider()),
+                  ],
+                ),
+
+                const SizedBox(height: 20),
+
+                _buildGoogleLoginButton(),
+
+                const SizedBox(height: 20),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Belum punya akun? ",
+                      style: TextStyle(color: TColor.black, fontSize: 14),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        // Tangani login Facebook
-                      },
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: TColor.white,
-                          border: Border.all(
-                            width: 1,
-                            color: TColor.gray.withOpacity(0.4),
-                          ),
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Image.asset(
-                          "assets/img/facebook.png",
-                          width: 20,
-                          height: 20,
-                        ),
+                    InkWell(
+                      onTap: _isLoading
+                          ? null
+                          : () {
+                              Navigator.pushReplacementNamed(context, '/signup');
+                            },
+                      child: Text(
+                        "Daftar",
+                        style: TextStyle(
+                            color: Colors.purple.shade700,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700),
                       ),
                     )
                   ],
                 ),
-                SizedBox(
-                  height: media.width * 0.04,
-                ),
-                TextButton(
-                  onPressed: () {
-                    // Navigasi menggunakan named route ke SignupView
-                    // Ini akan mengeluarkan LoginView saat ini dan mendorong SignupView
-                    Navigator.pushReplacementNamed(context, '/signup');
-                  },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        "Belum punya akun? ", // Diterjemahkan
-                        style: TextStyle(
-                          color: TColor.black,
-                          fontSize: 14,
-                        ),
-                      ),
-                      Text(
-                        "Daftar", // Diterjemahkan
-                        style: TextStyle(
-                            color: TColor.black,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700),
-                      )
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: media.width * 0.04,
-                ),
+                const SizedBox(height: 30),
               ],
             ),
           ),

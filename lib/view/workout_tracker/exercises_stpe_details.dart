@@ -15,44 +15,45 @@ class ExercisesStepDetails extends StatefulWidget {
 }
 
 class _ExercisesStepDetailsState extends State<ExercisesStepDetails> {
+  // Daftar langkah-langkah latihan
   List stepArr = [
     {
       "no": "01",
-      "title": "Spread Your Arms",
+      "title": "Rentangkan Tanganmu", // Judul langkah 1
       "detail":
-          "To make the gestures feel more relaxed, stretch your arms as you start this movement. No bending of hands."
+          "Untuk membuat gerakan terasa lebih rileks, rentangkan tanganmu saat memulai gerakan ini. Jangan tekuk tangan." // Detail langkah 1
     },
     {
       "no": "02",
-      "title": "Rest at The Toe",
+      "title": "Istirahat di Ujung Kaki", // Judul langkah 2
       "detail":
-          "The basis of this movement is jumping. Now, what needs to be considered is that you have to use the tips of your feet"
+          "Dasar gerakan ini adalah melompat. Sekarang, yang perlu diperhatikan adalah kamu harus menggunakan ujung kakimu" // Detail langkah 2
     },
     {
       "no": "03",
-      "title": "Adjust Foot Movement",
+      "title": "Sesuaikan Gerakan Kaki", // Judul langkah 3
       "detail":
-          "Jumping Jack is not just an ordinary jump. But, you also have to pay close attention to leg movements."
+          "Jumping Jack bukan hanya lompatan biasa. Tapi, kamu juga harus memperhatikan gerakan kaki dengan cermat." // Detail langkah 3
     },
     {
       "no": "04",
-      "title": "Clapping Both Hands",
+      "title": "Tepuk Kedua Tangan", // Judul langkah 4
       "detail":
-          "This cannot be taken lightly. You see, without realizing it, the clapping of your hands helps you to keep your rhythm while doing the Jumping Jack"
+          "Ini tidak bisa dianggap remeh. Tanpa disadari, tepukan tanganmu membantumu menjaga ritme saat melakukan Jumping Jack" // Detail langkah 4
     },
   ];
 
   @override
   Widget build(BuildContext context) {
-    var media = MediaQuery.of(context).size;
+    var media = MediaQuery.of(context).size; // Mendapatkan ukuran media (layar)
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: TColor.white,
-        centerTitle: true,
-        elevation: 0,
-        leading: InkWell(
+        backgroundColor: TColor.white, // Warna latar belakang AppBar
+        centerTitle: true, // Pusatkan judul
+        elevation: 0, // Hilangkan bayangan AppBar
+        leading: InkWell( // Tombol kembali di kiri
           onTap: () {
-            Navigator.pop(context);
+            Navigator.pop(context); // Kembali ke layar sebelumnya
           },
           child: Container(
             margin: const EdgeInsets.all(8),
@@ -60,10 +61,10 @@ class _ExercisesStepDetailsState extends State<ExercisesStepDetails> {
             width: 40,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-                color: TColor.lightGray,
-                borderRadius: BorderRadius.circular(10)),
+                color: TColor.lightGray, // Warna latar belakang tombol
+                borderRadius: BorderRadius.circular(10)), // Sudut membulat
             child: Image.asset(
-              "assets/img/closed_btn.png",
+              "assets/img/closed_btn.png", // Ikon tutup
               width: 15,
               height: 15,
               fit: BoxFit.contain,
@@ -71,7 +72,7 @@ class _ExercisesStepDetailsState extends State<ExercisesStepDetails> {
           ),
         ),
         actions: [
-          InkWell(
+          InkWell( // Tombol lainnya di kanan
             onTap: () {},
             child: Container(
               margin: const EdgeInsets.all(8),
@@ -79,10 +80,10 @@ class _ExercisesStepDetailsState extends State<ExercisesStepDetails> {
               width: 40,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                  color: TColor.lightGray,
-                  borderRadius: BorderRadius.circular(10)),
+                  color: TColor.lightGray, // Warna latar belakang tombol
+                  borderRadius: BorderRadius.circular(10)), // Sudut membulat
               child: Image.asset(
-                "assets/img/more_btn.png",
+                "assets/img/more_btn.png", // Ikon lainnya
                 width: 15,
                 height: 15,
                 fit: BoxFit.contain,
@@ -91,24 +92,24 @@ class _ExercisesStepDetailsState extends State<ExercisesStepDetails> {
           )
         ],
       ),
-      backgroundColor: TColor.white,
-      body: SingleChildScrollView(
+      backgroundColor: TColor.white, // Warna latar belakang halaman
+      body: SingleChildScrollView( // Memungkinkan konten dapat digulir
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start, // Sejajarkan konten ke kiri
             children: [
-              Stack(
+              Stack( // Stack untuk video/gambar placeholder dan tombol putar
                 alignment: Alignment.center,
                 children: [
                   Container(
                     width: media.width,
                     height: media.width * 0.43,
                     decoration: BoxDecoration(
-                        gradient: LinearGradient(colors: TColor.primaryG),
-                        borderRadius: BorderRadius.circular(20)),
+                        gradient: LinearGradient(colors: TColor.primaryG), // Gradien latar belakang
+                        borderRadius: BorderRadius.circular(20)), // Sudut membulat
                     child: Image.asset(
-                      "assets/img/video_temp.png",
+                      "assets/img/video_temp.png", // Gambar placeholder video
                       width: media.width,
                       height: media.width * 0.43,
                       fit: BoxFit.contain,
@@ -118,13 +119,13 @@ class _ExercisesStepDetailsState extends State<ExercisesStepDetails> {
                     width: media.width,
                     height: media.width * 0.43,
                     decoration: BoxDecoration(
-                        color: TColor.black.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(20)),
+                        color: TColor.black.withOpacity(0.2), // Overlay gelap
+                        borderRadius: BorderRadius.circular(20)), // Sudut membulat
                   ),
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () {}, // Aksi saat tombol putar ditekan
                     icon: Image.asset(
-                      "assets/img/Play.png",
+                      "assets/img/Play.png", 
                       width: 30,
                       height: 30,
                     ),
@@ -132,45 +133,46 @@ class _ExercisesStepDetailsState extends State<ExercisesStepDetails> {
                 ],
               ),
               const SizedBox(
-                height: 15,
+                height: 15, // Spasi vertikal
               ),
               Text(
-                widget.eObj["title"].toString(),
+                widget.eObj["title"].toString(), // Judul latihan
                 style: TextStyle(
                     color: TColor.black,
                     fontSize: 16,
                     fontWeight: FontWeight.w700),
               ),
               const SizedBox(
-                height: 4,
+                height: 4, // Spasi vertikal
               ),
               Text(
-                "Easy | 390 Calories Burn",
+                "Mudah | 390 Kalori Terbakar", // Teks kesulitan dan kalori terbakar
                 style: TextStyle(
                   color: TColor.gray,
                   fontSize: 12,
                 ),
               ),
               const SizedBox(
-                height: 15,
+                height: 15, // Spasi vertikal
               ),
               Text(
-                "Descriptions",
+                "Deskripsi", // Judul bagian deskripsi
                 style: TextStyle(
                     color: TColor.black,
                     fontSize: 16,
                     fontWeight: FontWeight.w700),
               ),
               const SizedBox(
-                height: 4,
+                height: 4, // Spasi vertikal
               ),
               ReadMoreText(
-                'A jumping jack, also known as a star jump and called a side-straddle hop in the US military, is a physical jumping exercise performed by jumping to a position with the legs spread wide A jumping jack, also known as a star jump and called a side-straddle hop in the US military, is a physical jumping exercise performed by jumping to a position with the legs spread wide',
-                trimLines: 4,
-                colorClickableText: TColor.black,
-                trimMode: TrimMode.Line,
-                trimCollapsedText: ' Read More ...',
-                trimExpandedText: ' Read Less',
+                // Widget untuk teks yang dapat "dibaca lebih lanjut"
+                'Jumping jack, juga dikenal sebagai star jump dan disebut side-straddle hop dalam militer AS, adalah latihan lompat fisik yang dilakukan dengan melompat ke posisi dengan kaki terbuka lebar. Jumping jack, juga dikenal sebagai star jump dan disebut side-straddle hop dalam militer AS, adalah latihan lompat fisik yang dilakukan dengan melompat ke posisi dengan kaki terbuka lebar', // Deskripsi latihan
+                trimLines: 4, // Jumlah baris yang ditampilkan sebelum dipotong
+                colorClickableText: TColor.black, // Warna teks "Baca Selengkapnya"
+                trimMode: TrimMode.Line, // Potong berdasarkan baris
+                trimCollapsedText: ' Baca Selengkapnya ...', // Teks saat terpotong
+                trimExpandedText: ' Ciutkan', // Teks saat diperluas
                 style: TextStyle(
                   color: TColor.gray,
                   fontSize: 12,
@@ -179,13 +181,13 @@ class _ExercisesStepDetailsState extends State<ExercisesStepDetails> {
                     const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
               ),
               const SizedBox(
-                height: 15,
+                height: 15, // Spasi vertikal
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "How To Do It",
+                    "Cara Melakukannya", // Judul bagian cara melakukan
                     style: TextStyle(
                         color: TColor.black,
                         fontSize: 16,
@@ -194,37 +196,37 @@ class _ExercisesStepDetailsState extends State<ExercisesStepDetails> {
                   TextButton(
                     onPressed: () {},
                     child: Text(
-                      "${stepArr.length} Sets",
+                      "${stepArr.length} Set", // Menampilkan jumlah set
                       style: TextStyle(color: TColor.gray, fontSize: 12),
                     ),
                   )
                 ],
               ),
               ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: stepArr.length,
+                physics: const NeverScrollableScrollPhysics(), // Gulir manual
+                shrinkWrap: true, // Memungkinkan ListView mengambil ruang yang dibutuhkan
+                itemCount: stepArr.length, // Jumlah item dalam daftar langkah
                 itemBuilder: ((context, index) {
                   var sObj = stepArr[index] as Map? ?? {};
 
                   return StepDetailRow(
                     sObj: sObj,
-                    isLast: stepArr.last == sObj,
+                    isLast: stepArr.last == sObj, // Cek apakah ini langkah terakhir
                   );
                 }),
               ),
               Text(
-                "Custom Repetitions",
+                "Pengulangan Kustom", // Judul bagian pengulangan kustom
                 style: TextStyle(
                     color: TColor.black,
                     fontSize: 16,
                     fontWeight: FontWeight.w700),
               ),
               SizedBox(
-                height: 150,
+                height: 150, // Tinggi untuk CupertinoPicker
                 child: CupertinoPicker.builder(
-                  itemExtent: 40,
-                  selectionOverlay: Container(
+                  itemExtent: 40, // Tinggi setiap item
+                  selectionOverlay: Container( // Overlay untuk item yang dipilih
                     width: double.maxFinite,
                     height: 40,
                     decoration: BoxDecoration(
@@ -235,31 +237,33 @@ class _ExercisesStepDetailsState extends State<ExercisesStepDetails> {
                       ),
                     ),
                   ),
-                  onSelectedItemChanged: (index) {},
-                  childCount: 60,
+                  onSelectedItemChanged: (index) {
+                    // Aksi saat item dipilih
+                  },
+                  childCount: 60, // Jumlah item di picker
                   itemBuilder: (context, index) {
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image.asset(
-                          "assets/img/burn.png",
+                          "assets/img/burn.png", // Ikon kalori
                           width: 15,
                           height: 15,
                           fit: BoxFit.contain,
                         ),
                         Text(
-                          " ${(index + 1) * 15} Calories Burn",
+                          " ${(index + 1) * 15} Kalori Terbakar", // Teks kalori terbakar
                           style: TextStyle(color: TColor.gray, fontSize: 10),
                         ),
                         Text(
-                          " ${index + 1} ",
+                          " ${index + 1} ", // Jumlah pengulangan
                           style: TextStyle(
                               color: TColor.gray,
                               fontSize: 24,
                               fontWeight: FontWeight.w500),
                         ),
                         Text(
-                          " times",
+                          " kali", // Satuan pengulangan
                           style: TextStyle(color: TColor.gray, fontSize: 16),
                         )
                       ],
@@ -267,9 +271,9 @@ class _ExercisesStepDetailsState extends State<ExercisesStepDetails> {
                   },
                 ),
               ),
-              RoundButton(title: "Save", elevation: 0, onPressed: () {}),
+              RoundButton(title: "Simpan", elevation: 0, onPressed: () {}), // Tombol simpan
               const SizedBox(
-                height: 15,
+                height: 15, // Spasi vertikal
               ),
             ],
           ),

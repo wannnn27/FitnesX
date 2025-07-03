@@ -1,6 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fitness/common/colo_extension.dart';
-// Tidak perlu mengimpor tampilan tertentu saat menggunakan named routes untuk navigasi dalam file ini
-// import 'package:fitness/view/login/what_your_goal_view.dart'; 
 import 'package:flutter/material.dart';
 
 import '../../common_widget/round_button.dart';
@@ -15,11 +15,52 @@ class CompleteProfileView extends StatefulWidget {
 
 class _CompleteProfileViewState extends State<CompleteProfileView> {
   TextEditingController txtDate = TextEditingController();
-  // Anda mungkin ingin menambahkan pengendali untuk berat dan tinggi juga, jika itu dimaksudkan sebagai bidang input
-  // TextEditingController txtWeight = TextEditingController();
-  // TextEditingController txtHeight = TextEditingController();
+  TextEditingController txtWeight = TextEditingController();
+  TextEditingController txtHeight = TextEditingController();
 
-  String? _selectedGender; // Untuk menampung jenis kelamin yang dipilih dari dropdown
+  String? _selectedGender;
+
+  @override
+  void dispose() {
+    txtDate.dispose();
+    txtWeight.dispose();
+    txtHeight.dispose();
+    super.dispose();
+  }
+
+  Future<void> _saveProfileData() async {
+    if (_selectedGender == null ||
+        txtDate.text.isEmpty ||
+        txtWeight.text.isEmpty ||
+        txtHeight.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Semua kolom harus diisi!')),
+      );
+      return;
+    }
+
+    try {
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid == null) throw Exception("User tidak ditemukan!");
+
+      await FirebaseFirestore.instance.collection('users').doc(uid).set({
+        'gender': _selectedGender,
+        'birthDate': txtDate.text,
+        'weight': double.tryParse(txtWeight.text) ?? 0.0,
+        'height': double.tryParse(txtHeight.text) ?? 0.0,
+        'updatedAt': Timestamp.now(),
+      }, SetOptions(merge: true));
+
+      if (mounted) {
+        Navigator.pushNamed(context, '/what_your_goal');
+      }
+    } catch (e) {
+      print("Gagal simpan profil: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal menyimpan data profil: ${e.toString()}')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,52 +78,48 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                   width: media.width,
                   fit: BoxFit.fitWidth,
                 ),
-                SizedBox(
-                  height: media.width * 0.05,
-                ),
+                SizedBox(height: media.width * 0.05),
                 Text(
-                  "Ayo lengkapi profil Anda", // Diterjemahkan
+                  "Ayo lengkapi profil Anda",
                   style: TextStyle(
                       color: TColor.black,
                       fontSize: 20,
                       fontWeight: FontWeight.w700),
                 ),
                 Text(
-                  "Ini akan membantu kami mengetahui lebih banyak tentang Anda!", // Diterjemahkan
+                  "Ini akan membantu kami mengetahui lebih banyak tentang Anda!",
                   style: TextStyle(color: TColor.gray, fontSize: 12),
                 ),
-                SizedBox(
-                  height: media.width * 0.05,
-                ),
+                SizedBox(height: media.width * 0.05),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15.0),
                   child: Column(
                     children: [
                       Container(
                         decoration: BoxDecoration(
-                            color: TColor.lightGray,
-                            borderRadius: BorderRadius.circular(15)),
+                          color: TColor.lightGray,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
                         child: Row(
                           children: [
                             Container(
-                                alignment: Alignment.center,
-                                width: 50,
-                                height: 50,
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 15),
-                                child: Image.asset(
-                                  "assets/img/gender.png",
-                                  width: 20,
-                                  height: 20,
-                                  fit: BoxFit.contain,
-                                  color: TColor.gray,
-                                )),
+                              alignment: Alignment.center,
+                              width: 50,
+                              height: 50,
+                              padding: const EdgeInsets.symmetric(horizontal: 15),
+                              child: Image.asset(
+                                "assets/img/gender.png",
+                                width: 20,
+                                height: 20,
+                                fit: BoxFit.contain,
+                                color: TColor.gray,
+                              ),
+                            ),
                             Expanded(
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton<String>(
-                                  // Menentukan tipe String
-                                  value: _selectedGender, // Nilai yang dipilih saat ini
-                                  items: ["Pria", "Wanita"] // Diterjemahkan
+                                  value: _selectedGender,
+                                  items: ["Pria", "Wanita"]
                                       .map((name) => DropdownMenuItem(
                                             value: name,
                                             child: Text(
@@ -94,51 +131,42 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                                           ))
                                       .toList(),
                                   onChanged: (String? newValue) {
-                                    // Jadikan nullable dan tentukan tipe
                                     setState(() {
                                       _selectedGender = newValue;
                                     });
                                   },
                                   isExpanded: true,
                                   hint: Text(
-                                    "Pilih Jenis Kelamin", // Diterjemahkan
+                                    "Pilih Jenis Kelamin",
                                     style: TextStyle(
                                         color: TColor.gray, fontSize: 12),
                                   ),
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 8)
+                            const SizedBox(width: 8),
                           ],
                         ),
                       ),
-                      SizedBox(
-                        height: media.width * 0.04,
-                      ),
+                      SizedBox(height: media.width * 0.04),
                       RoundTextField(
                         controller: txtDate,
-                        hitText: "Tanggal Lahir", // Diterjemahkan
+                        hitText: "Tanggal Lahir",
                         icon: "assets/img/date.png",
-                        keyboardType: TextInputType
-                            .datetime, // Menyarankan tipe keyboard yang benar
+                        keyboardType: TextInputType.datetime,
                       ),
-                      SizedBox(
-                        height: media.width * 0.04,
-                      ),
+                      SizedBox(height: media.width * 0.04),
                       Row(
                         children: [
                           const Expanded(
                             child: RoundTextField(
-                              // controller: txtWeight, // Tetapkan pengendali spesifik
-                              hitText: "Berat Badan Anda", // Diterjemahkan
+                              controller: txtWeight,
+                              hitText: "Berat Badan Anda",
                               icon: "assets/img/weight.png",
-                              keyboardType: TextInputType
-                                  .number, // Menyarankan tipe keyboard yang benar
+                              keyboardType: TextInputType.number,
                             ),
                           ),
-                          const SizedBox(
-                            width: 8,
-                          ),
+                          const SizedBox(width: 8),
                           Container(
                             width: 50,
                             height: 50,
@@ -150,29 +178,24 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                               borderRadius: BorderRadius.circular(15),
                             ),
                             child: Text(
-                              "KG", // Tetap KG karena ini satuan internasional
+                              "KG",
                               style: TextStyle(color: TColor.white, fontSize: 12),
                             ),
                           )
                         ],
                       ),
-                      SizedBox(
-                        height: media.width * 0.04,
-                      ),
+                      SizedBox(height: media.width * 0.04),
                       Row(
                         children: [
                           const Expanded(
                             child: RoundTextField(
-                              // controller: txtHeight, // Tetapkan pengendali spesifik
-                              hitText: "Tinggi Badan Anda", // Diterjemahkan
+                              controller: txtHeight,
+                              hitText: "Tinggi Badan Anda",
                               icon: "assets/img/hight.png",
-                              keyboardType: TextInputType
-                                  .number, // Menyarankan tipe keyboard yang benar
+                              keyboardType: TextInputType.number,
                             ),
                           ),
-                          const SizedBox(
-                            width: 8,
-                          ),
+                          const SizedBox(width: 8),
                           Container(
                             width: 50,
                             height: 50,
@@ -184,21 +207,17 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                               borderRadius: BorderRadius.circular(15),
                             ),
                             child: Text(
-                              "CM", // Tetap CM karena ini satuan internasional
+                              "CM",
                               style: TextStyle(color: TColor.white, fontSize: 12),
                             ),
                           )
                         ],
                       ),
-                      SizedBox(
-                        height: media.width * 0.07,
-                      ),
+                      SizedBox(height: media.width * 0.07),
                       RoundButton(
-                          title: "Selanjutnya >", // Diterjemahkan
-                          onPressed: () {
-                            // Navigasi menggunakan named route ke WhatYourGoalView
-                            Navigator.pushNamed(context, '/what_your_goal');
-                          }),
+                        title: "Selanjutnya >",
+                        onPressed: _saveProfileData,
+                      ),
                     ],
                   ),
                 ),

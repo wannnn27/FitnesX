@@ -1,186 +1,277 @@
-import 'package:fitness/common_widget/on_boarding_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fitness/common/colo_extension.dart';
+import 'package:fitness/common_widget/round_button.dart';
+import 'package:fitness/common_widget/round_textfield.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart'; // Import untuk kIsWeb
-import '../../common/colo_extension.dart';
 
-class OnBoardingView extends StatefulWidget {
-  const OnBoardingView({super.key});
-  
+class SignupView extends StatefulWidget {
+  const SignupView({super.key});
+
   @override
-  State<OnBoardingView> createState() => _OnBoardingViewState();
+  State<SignupView> createState() => _SignupViewState();
 }
 
-class _OnBoardingViewState extends State<OnBoardingView> {
-  int selectPage = 0;
-  final PageController controller = PageController();
-  
-  final List pageArr = [
-    {
-      "title": "Track Your Goal",
-      "subtitle":
-          "Don't worry if you have trouble determining your goals, We can help you determine your goals and track your goals",
-      "image": "assets/img/on_1.png"
-    },
-    {
-      "title": "Get Burn",
-      "subtitle":
-          "Let's keep burning, to achieve your goals, it hurts only temporarily, if you give up now you will be in pain forever",
-      "image": "assets/img/on_2.png"
-    },
-    {
-      "title": "Eat Well",
-      "subtitle":
-          "Let's start a healthy lifestyle with us, we can determine your diet every day. healthy eating is fun",
-      "image": "assets/img/on_3.png"
-    },
-    {
-      "title": "Improve Sleep\nQuality",
-      "subtitle":
-          "Improve the quality of your sleep with us, good quality sleep can bring a good mood in the morning",
-      "image": "assets/img/on_4.png"
-    },
-  ];
+class _SignupViewState extends State<SignupView> {
+  // Instance Firebase
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  // Controller untuk mengambil data dari TextField
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  bool isCheck = false;
+  bool _isLoading = false; // State untuk loading indicator
+  String _errorMessage = ''; // State untuk pesan error
 
   @override
-  void initState() {
-    super.initState();
-    controller.addListener(() {
+  void dispose() {
+    // Selalu dispose controller untuk menghindari memory leak
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  // Fungsi untuk melakukan registrasi
+  Future<void> _registerUser() async {
+    // Validasi sederhana
+    if (_firstNameController.text.isEmpty ||
+        _lastNameController.text.isEmpty ||
+        _emailController.text.isEmpty ||
+        _passwordController.text.isEmpty) {
+      setState(() {
+        _errorMessage = "Semua kolom harus diisi.";
+      });
+      return;
+    }
+    if (!isCheck) {
+      setState(() {
+        _errorMessage = "Anda harus menyetujui Kebijakan Privasi.";
+      });
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = '';
+    });
+
+    try {
+      print("🚀 Memulai proses registrasi...");
+      
+      // 1. Buat pengguna di Firebase Authentication
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      print("✅ User berhasil dibuat di Firebase Auth: ${userCredential.user?.uid}");
+
+      // 2. Simpan data tambahan ke Firestore
+      if (userCredential.user != null) {
+        await _firestore.collection('users').doc(userCredential.user!.uid).set({
+          'firstName': _firstNameController.text.trim(),
+          'lastName': _lastNameController.text.trim(),
+          'email': _emailController.text.trim(),
+          'uid': userCredential.user!.uid,
+          'createdAt': Timestamp.now(),
+        });
+
+        print("✅ Data user berhasil disimpan ke Firestore");
+
+        // 3. Tambahkan delay kecil untuk memastikan semua proses selesai
+        await Future.delayed(const Duration(milliseconds: 300));
+
+        // 4. Navigasi jika berhasil
+        if (mounted) {
+          print("✅ Navigasi ke complete_profile...");
+          Navigator.of(context).pushReplacementNamed('/complete_profile');
+        } else {
+          print("❌ Widget sudah tidak mounted!");
+        }
+      }
+
+    } on FirebaseAuthException catch (e) {
+      print("❌ Firebase Auth Error: ${e.code} - ${e.message}");
+      // Tangani error dari Firebase
+      String errorMessage;
+      switch (e.code) {
+        case 'weak-password':
+          errorMessage = 'Password terlalu lemah. Gunakan minimal 6 karakter.';
+          break;
+        case 'email-already-in-use':
+          errorMessage = 'Email sudah terdaftar. Silakan gunakan email lain.';
+          break;
+        case 'invalid-email':
+          errorMessage = 'Format email tidak valid.';
+          break;
+        default:
+          errorMessage = e.message ?? "Terjadi kesalahan saat mendaftar.";
+      }
+      
+      setState(() {
+        _errorMessage = errorMessage;
+      });
+    } catch (e) {
+      print("❌ General Error: $e");
+      // Tangani error lainnya
+      setState(() {
+        _errorMessage = "Terjadi kesalahan yang tidak diketahui: ${e.toString()}";
+      });
+    } finally {
+      // Hentikan loading
       if (mounted) {
         setState(() {
-          selectPage = controller.page?.round() ?? 0;
+          _isLoading = false;
         });
       }
-    });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Dapatkan ukuran layar
-    final screenSize = MediaQuery.of(context).size;
-    const isWeb = kIsWeb;
-    
-    // Sesuaikan ukuran untuk web
-    double buttonSize = isWeb ? 80 : 60;
-    double progressSize = isWeb ? 90 : 70;
-    double containerSize = isWeb ? 140 : 120;
-    
+    var media = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: TColor.white,
-      body: SafeArea(
-        child: Stack(
-          alignment: Alignment.bottomRight,
-          children: [
-            // PageView dengan constraint untuk web
-            SizedBox(
-              width: screenSize.width,
-              height: screenSize.height,
-              child: PageView.builder(
-                controller: controller,
-                itemCount: pageArr.length,
-                itemBuilder: (context, index) {
-                  var pObj = pageArr[index] as Map? ?? {};
-                  return OnBoardingPage(pObj: pObj);
-                },
-              ),
-            ),
-            
-            // Button navigasi dengan ukuran responsif
-            Positioned(
-              bottom: isWeb ? 40 : 30,
-              right: isWeb ? 40 : 20,
-              child: SizedBox(
-                width: containerSize,
-                height: containerSize,
-                child: Stack(
-                  alignment: Alignment.center,
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(height: media.width * 0.1),
+                Text(
+                  "Buat Akun",
+                  style: TextStyle(
+                      color: TColor.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700),
+                ),
+                SizedBox(height: media.width * 0.05),
+
+                // Hubungkan controller ke TextField
+                RoundTextField(
+                  controller: _firstNameController,
+                  hitText: "Nama Depan",
+                  icon: "assets/img/user_text.png",
+                ),
+                SizedBox(height: media.width * 0.04),
+                RoundTextField(
+                  controller: _lastNameController,
+                  hitText: "Nama Belakang",
+                  icon: "assets/img/user_text.png",
+                ),
+                SizedBox(height: media.width * 0.04),
+                RoundTextField(
+                  controller: _emailController,
+                  hitText: "Email",
+                  icon: "assets/img/email.png",
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                SizedBox(height: media.width * 0.04),
+                RoundTextField(
+                  controller: _passwordController,
+                  hitText: "Kata Sandi",
+                  icon: "assets/img/lock.png",
+                  obscureText: true,
+                ),
+                
+                // Checkbox untuk Privacy Policy
+                Row(
                   children: [
-                    // Progress indicator
-                    SizedBox(
-                      width: progressSize,
-                      height: progressSize,
-                      child: CircularProgressIndicator(
-                        color: TColor.primaryColor1,
-                        value: (selectPage + 1) / pageArr.length,
-                        strokeWidth: isWeb ? 3 : 2,
-                        backgroundColor: TColor.primaryColor1.withOpacity(0.2),
+                    IconButton(
+                      onPressed: () {
+                        setState(() {
+                          isCheck = !isCheck;
+                        });
+                      },
+                      icon: Icon(
+                        isCheck
+                            ? Icons.check_box_outlined
+                            : Icons.check_box_outline_blank_outlined,
+                        color: TColor.gray,
+                        size: 20,
                       ),
                     ),
-                    
-                    // Button
-                    Container(
-                      width: buttonSize,
-                      height: buttonSize,
-                      decoration: BoxDecoration(
-                        color: TColor.primaryColor1,
-                        borderRadius: BorderRadius.circular(buttonSize / 2),
-                        boxShadow: isWeb ? [
-                          BoxShadow(
-                            color: TColor.primaryColor1.withOpacity(0.3),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ] : [],
+                    Expanded(
+                      child: Text(
+                        "Dengan melanjutkan, Anda menyetujui Kebijakan Privasi dan\nKetentuan Penggunaan kami",
+                        style: TextStyle(color: TColor.gray, fontSize: 10),
                       ),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(buttonSize / 2),
-                          onTap: () {
-                            if (selectPage < pageArr.length - 1) {
-                              controller.animateToPage(
-                                selectPage + 1,
-                                duration: const Duration(milliseconds: 600),
-                                curve: Curves.bounceInOut,
-                              );
-                            } else {
-                              // Navigate to SignupView using named route
-                              Navigator.pushReplacementNamed(context, '/signup');
-                            }
-                          },
-                          child: Icon(
-                            Icons.navigate_next,
-                            color: TColor.white,
-                            size: isWeb ? 32 : 24,
-                          ),
-                        ),
-                      ),
-                    ),
+                    )
                   ],
                 ),
-              ),
-            ),
-            
-            // Indikator halaman (opsional untuk web)
-            if (isWeb)
-              Positioned(
-                bottom: 40,
-                left: 40,
-                child: Row(
-                  children: List.generate(
-                    pageArr.length,
-                    (index) => Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 4),
-                      width: selectPage == index ? 20 : 6,
-                      height: 6,
+                
+                // Tampilkan pesan error jika ada
+                if (_errorMessage.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: selectPage == index 
-                            ? TColor.primaryColor1 
-                            : TColor.primaryColor1.withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(3),
+                        color: Colors.red.shade50,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.red.shade200),
+                      ),
+                      child: Text(
+                        _errorMessage,
+                        style: const TextStyle(color: Colors.red, fontSize: 14),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ),
+
+                SizedBox(height: media.width * 0.1),
+                
+                                // Tombol Daftar
+                RoundButton(
+                  title: _isLoading ? "Memproses..." : "Daftar",
+                  onPressed: _isLoading
+                      ? () {}
+                      : () {
+                          _registerUser();
+                        },
                 ),
-              ),
-          ],
+
+                SizedBox(height: media.width * 0.04),
+                
+                // Tombol navigasi ke Login
+                TextButton(
+                  onPressed: _isLoading ? null : () {
+                    print("🔄 Navigasi ke halaman login...");
+                    Navigator.of(context).pushNamed('/login');
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "Sudah punya akun? ",
+                        style: TextStyle(
+                          color: _isLoading ? TColor.gray : TColor.black,
+                          fontSize: 14,
+                        ),
+                      ),
+                      Text(
+                        "Masuk",
+                        style: TextStyle(
+                            color: _isLoading ? TColor.gray : TColor.black,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700),
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
   }
 }
