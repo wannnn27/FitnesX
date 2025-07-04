@@ -396,7 +396,8 @@ class _HomeViewState extends State<HomeView> {
                                 }).toList();
                               },
                               touchTooltipData: LineTouchTooltipData(
-                                getTooltipColor: (data) => TColor.secondaryColor1,
+                                getTooltipColor: (data) =>
+                                    TColor.secondaryColor1,
                                 getTooltipItems:
                                     (List<LineBarSpot> lineBarsSpot) {
                                   return lineBarsSpot.map((lineBarSpot) {
@@ -1124,7 +1125,7 @@ class _HomeViewState extends State<HomeView> {
         break;
     }
 
-    return SideTitleWidget( 
+    return SideTitleWidget(
       meta: meta,
       space: 10,
       child: text,

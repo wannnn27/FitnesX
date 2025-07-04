@@ -16,31 +16,134 @@ class MealPlannerView extends StatefulWidget {
 }
 
 class _MealPlannerViewState extends State<MealPlannerView> {
+  String? _selectedNutritionFilter = "Weekly";
+  String? _selectedTodayMealFilter = "Breakfast";
+
+  // Data makanan hari ini (contoh, seharusnya dari data yang ditambahkan pengguna)
   List todayMealArr = [
     {
       "name": "Salmon Nigiri",
       "image": "assets/img/m_1.png",
-      "time": "28/05/2023 07:00 AM"
+      "time": "28/05/2023 07:00 AM",
+      "meal_type": "Breakfast",
+      "calories": 300 // Contoh kalori
     },
     {
       "name": "Lowfat Milk",
       "image": "assets/img/m_2.png",
-      "time": "28/05/2023 08:00 AM"
+      "time": "28/05/2023 08:00 AM",
+      "meal_type": "Breakfast",
+      "calories": 120
+    },
+    {
+      "name": "Chicken Salad",
+      "image": "assets/img/salad.png",
+      "time": "28/05/2023 12:30 PM",
+      "meal_type": "Lunch",
+      "calories": 450
+    },
+    {
+      "name": "Apple Pie",
+      "image": "assets/img/apple_pie.png",
+      "time": "28/05/2023 04:00 PM",
+      "meal_type": "Snack",
+      "calories": 200
+    },
+    {
+      "name": "Grilled Fish",
+      "image": "assets/img/dinner.png",
+      "time": "28/05/2023 07:00 PM",
+      "meal_type": "Dinner",
+      "calories": 500
     },
   ];
 
+  // Data untuk kategori 'Find Something to Eat'
   List findEatArr = [
     {
       "name": "Breakfast",
       "image": "assets/img/m_3.png",
-      "number": "120+ Foods"
+      "number": "120+ Foods",
+      "type": "breakfast" // Tambahkan tipe untuk identifikasi
     },
-    {"name": "Lunch", "image": "assets/img/m_4.png", "number": "130+ Foods"},
+    {
+      "name": "Lunch",
+      "image": "assets/img/m_4.png",
+      "number": "130+ Foods",
+      "type": "lunch"
+    },
+    {
+      "name": "Dinner",
+      "image": "icon",
+      "icon_data": Icons.dinner_dining,
+      "number": "100+ Foods",
+      "type": "dinner"
+    },
+    {
+      "name": "Snack",
+      "image": "icon",
+      "icon_data": Icons.cookie,
+      "number": "80+ Foods",
+      "type": "snack"
+    },
+    {
+      "name": "Dessert",
+      "image": "icon",
+      "icon_data": Icons.icecream,
+      "number": "50+ Foods",
+      "type": "dessert"
+    },
   ];
+
+  List<FlSpot> weeklySpots = const [
+    FlSpot(1, 35), // Sun
+    FlSpot(2, 70), // Mon
+    FlSpot(3, 40), // Tue
+    FlSpot(4, 80), // Wed
+    FlSpot(5, 25), // Thu
+    FlSpot(6, 70), // Fri
+    FlSpot(7, 35), // Sat
+  ];
+
+  List<FlSpot> monthlySpots = const [
+    FlSpot(1, 50),
+    FlSpot(5, 60),
+    FlSpot(10, 45),
+    FlSpot(15, 75),
+    FlSpot(20, 30),
+    FlSpot(25, 90),
+    FlSpot(30, 65),
+  ];
+
+  // Ini akan dipanggil ketika tombol "Select" di FindEatCell diklik
+  void _onFindEatCellSelect(Map categoryObj) {
+    print("Mengelola pilihan untuk kategori: ${categoryObj['name']}");
+    // Di sini Anda bisa menavigasi ke halaman di mana pengguna bisa memilih makanan
+    // untuk kategori tersebut, atau langsung menampilkan dialog untuk menambahkan makanan.
+    // Contoh:
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MealFoodDetailsView(
+            eObj: categoryObj,
+            // Jika Anda ingin tahu dari kategori mana datangnya, bisa passing parameter:
+            // mealType: categoryObj['type']
+            ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
+
+    List filteredTodayMeals = todayMealArr.where((meal) {
+      return meal["meal_type"] == _selectedTodayMealFilter;
+    }).toList();
+
+    // Hitung total kalori untuk Today Meals yang difilter
+    int totalCaloriesForTodayMealType = filteredTodayMeals.fold(0, (sum, item) => sum + (item["calories"] as int));
+
 
     return Scaffold(
       appBar: AppBar(
@@ -74,7 +177,9 @@ class _MealPlannerViewState extends State<MealPlannerView> {
         ),
         actions: [
           InkWell(
-            onTap: () {},
+            onTap: () {
+              print("More options clicked for meal planner");
+            },
             child: Container(
               margin: const EdgeInsets.all(8),
               height: 40,
@@ -121,7 +226,8 @@ class _MealPlannerViewState extends State<MealPlannerView> {
                             borderRadius: BorderRadius.circular(15),
                           ),
                           child: DropdownButtonHideUnderline(
-                            child: DropdownButton(
+                            child: DropdownButton<String>(
+                              value: _selectedNutritionFilter,
                               items: ["Weekly", "Monthly"]
                                   .map((name) => DropdownMenuItem(
                                         value: name,
@@ -132,7 +238,11 @@ class _MealPlannerViewState extends State<MealPlannerView> {
                                         ),
                                       ))
                                   .toList(),
-                              onChanged: (value) {},
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedNutritionFilter = value;
+                                });
+                              },
                               icon:
                                   Icon(Icons.expand_more, color: TColor.white),
                               hint: Text(
@@ -154,32 +264,12 @@ class _MealPlannerViewState extends State<MealPlannerView> {
                       width: double.maxFinite,
                       child: LineChart(
                         LineChartData(
-                          // showingTooltipIndicators:
-                          //     showingTooltipOnSpots.map((index) {
-                          //   return ShowingTooltipIndicators([
-                          //     LineBarSpot(
-                          //       tooltipsOnBar,
-                          //       lineBarsData.indexOf(tooltipsOnBar),
-                          //       tooltipsOnBar.spots[index],
-                          //     ),
-                          //   ]);
-                          // }).toList(),
                           lineTouchData: LineTouchData(
                             enabled: true,
                             handleBuiltInTouches: false,
                             touchCallback: (FlTouchEvent event,
                                 LineTouchResponse? response) {
-                              // if (response == null || response.lineBarSpots == null) {
-                              //   return;
-                              // }
-                              // if (event is FlTapUpEvent) {
-                              //   final spotIndex =
-                              //       response.lineBarSpots!.first.spotIndex;
-                              //   showingTooltipOnSpots.clear();
-                              //   setState(() {
-                              //     showingTooltipOnSpots.add(spotIndex);
-                              //   });
-                              // }
+                              // Implementasi tooltip jika diperlukan
                             },
                             mouseCursorResolver: (FlTouchEvent event,
                                 LineTouchResponse? response) {
@@ -215,8 +305,36 @@ class _MealPlannerViewState extends State<MealPlannerView> {
                               getTooltipItems:
                                   (List<LineBarSpot> lineBarsSpot) {
                                 return lineBarsSpot.map((lineBarSpot) {
+                                  String label = "";
+                                  if (_selectedNutritionFilter == "Weekly") {
+                                    switch (lineBarSpot.x.toInt()) {
+                                      case 1:
+                                        label = 'Min';
+                                        break;
+                                      case 2:
+                                        label = 'Sen';
+                                        break;
+                                      case 3:
+                                        label = 'Sel';
+                                        break;
+                                      case 4:
+                                        label = 'Rab';
+                                        break;
+                                      case 5:
+                                        label = 'Kam';
+                                        break;
+                                      case 6:
+                                        label = 'Jum';
+                                        break;
+                                      case 7:
+                                        label = 'Sab';
+                                        break;
+                                    }
+                                  } else {
+                                    label = "Day ${lineBarSpot.x.toInt()}";
+                                  }
                                   return LineTooltipItem(
-                                    "${lineBarSpot.x.toInt()} mins ago",
+                                    "$label: ${lineBarSpot.y.toInt()}%",
                                     const TextStyle(
                                       color: Colors.white,
                                       fontSize: 10,
@@ -227,7 +345,7 @@ class _MealPlannerViewState extends State<MealPlannerView> {
                               },
                             ),
                           ),
-                          lineBarsData: lineBarsData1,
+                          lineBarsData: getLineBarsData(),
                           minY: -0.5,
                           maxY: 110,
                           titlesData: FlTitlesData(
@@ -235,7 +353,9 @@ class _MealPlannerViewState extends State<MealPlannerView> {
                               leftTitles: const AxisTitles(),
                               topTitles: const AxisTitles(),
                               bottomTitles: AxisTitles(
-                                sideTitles: bottomTitles,
+                                sideTitles: _selectedNutritionFilter == "Weekly"
+                                    ? bottomTitlesWeekly
+                                    : bottomTitlesMonthly,
                               ),
                               rightTitles: AxisTitles(
                                 sideTitles: rightTitles,
@@ -289,7 +409,7 @@ class _MealPlannerViewState extends State<MealPlannerView> {
                             fontSize: 12,
                             fontWeight: FontWeight.w400,
                             onPressed: () {
-                               Navigator.push(
+                              Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
@@ -323,7 +443,8 @@ class _MealPlannerViewState extends State<MealPlannerView> {
                             borderRadius: BorderRadius.circular(15),
                           ),
                           child: DropdownButtonHideUnderline(
-                            child: DropdownButton(
+                            child: DropdownButton<String>(
+                              value: _selectedTodayMealFilter,
                               items: [
                                 "Breakfast",
                                 "Lunch",
@@ -340,7 +461,11 @@ class _MealPlannerViewState extends State<MealPlannerView> {
                                         ),
                                       ))
                                   .toList(),
-                              onChanged: (value) {},
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedTodayMealFilter = value;
+                                });
+                              },
                               icon:
                                   Icon(Icons.expand_more, color: TColor.white),
                               hint: Text(
@@ -353,16 +478,23 @@ class _MealPlannerViewState extends State<MealPlannerView> {
                           )),
                     ],
                   ),
+                  Text(
+                    "Total Kalori: $totalCaloriesForTodayMealType kkal", // Menampilkan total kalori
+                    style: TextStyle(
+                        color: TColor.gray,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500),
+                  ),
                   SizedBox(
-                    height: media.width * 0.05,
+                    height: media.width * 0.02,
                   ),
                   ListView.builder(
                       padding: EdgeInsets.zero,
                       physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
-                      itemCount: todayMealArr.length,
+                      itemCount: filteredTodayMeals.length,
                       itemBuilder: (context, index) {
-                        var mObj = todayMealArr[index] as Map? ?? {};
+                        var mObj = filteredTodayMeals[index] as Map? ?? {};
                         return TodayMealRow(
                           mObj: mObj,
                         );
@@ -389,12 +521,22 @@ class _MealPlannerViewState extends State<MealPlannerView> {
                   itemBuilder: (context, index) {
                     var fObj = findEatArr[index] as Map? ?? {};
                     return InkWell(
-                      onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => MealFoodDetailsView(eObj: fObj) ) );
+                      onTap: () {
+                        // Ketika seluruh sel diklik, navigasi ke Food Details View
+                        // Ini adalah navigasi utama untuk kategori
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MealFoodDetailsView(
+                              eObj: fObj,
+                            ),
+                          ),
+                        );
                       },
                       child: FindEatCell(
                         fObj: fObj,
                         index: index,
+                        onSelectPressed: _onFindEatCellSelect, // Teruskan callback
                       ),
                     );
                   }),
@@ -408,11 +550,9 @@ class _MealPlannerViewState extends State<MealPlannerView> {
     );
   }
 
-  List<LineChartBarData> get lineBarsData1 => [
-        lineChartBarData1_1,
-      ];
-
-  LineChartBarData get lineChartBarData1_1 => LineChartBarData(
+  List<LineChartBarData> getLineBarsData() {
+    return [
+      LineChartBarData(
         isCurved: true,
         gradient: LinearGradient(colors: [
           TColor.primaryColor2,
@@ -430,16 +570,11 @@ class _MealPlannerViewState extends State<MealPlannerView> {
           ),
         ),
         belowBarData: BarAreaData(show: false),
-        spots: const [
-          FlSpot(1, 35),
-          FlSpot(2, 70),
-          FlSpot(3, 40),
-          FlSpot(4, 80),
-          FlSpot(5, 25),
-          FlSpot(6, 70),
-          FlSpot(7, 35),
-        ],
-      );
+        spots:
+            _selectedNutritionFilter == "Weekly" ? weeklySpots : monthlySpots,
+      ),
+    ];
+  }
 
   SideTitles get rightTitles => SideTitles(
         getTitlesWidget: rightTitleWidgets,
@@ -481,14 +616,14 @@ class _MealPlannerViewState extends State<MealPlannerView> {
         textAlign: TextAlign.center);
   }
 
-  SideTitles get bottomTitles => SideTitles(
+  SideTitles get bottomTitlesWeekly => SideTitles(
         showTitles: true,
         reservedSize: 32,
         interval: 1,
-        getTitlesWidget: bottomTitleWidgets,
+        getTitlesWidget: bottomTitleWidgetsWeekly,
       );
 
-  Widget bottomTitleWidgets(double value, TitleMeta meta) {
+  Widget bottomTitleWidgetsWeekly(double value, TitleMeta meta) {
     var style = TextStyle(
       color: TColor.gray,
       fontSize: 12,
@@ -496,31 +631,56 @@ class _MealPlannerViewState extends State<MealPlannerView> {
     Widget text;
     switch (value.toInt()) {
       case 1:
-        text = Text('Sun', style: style);
+        text = Text('Min', style: style);
         break;
       case 2:
-        text = Text('Mon', style: style);
+        text = Text('Sen', style: style);
         break;
       case 3:
-        text = Text('Tue', style: style);
+        text = Text('Sel', style: style);
         break;
       case 4:
-        text = Text('Wed', style: style);
+        text = Text('Rab', style: style);
         break;
       case 5:
-        text = Text('Thu', style: style);
+        text = Text('Kam', style: style);
         break;
       case 6:
-        text = Text('Fri', style: style);
+        text = Text('Jum', style: style);
         break;
       case 7:
-        text = Text('Sat', style: style);
+        text = Text('Sab', style: style);
         break;
       default:
         text = const Text('');
         break;
     }
 
+    return SideTitleWidget(
+      meta: meta,
+      space: 10,
+      child: text,
+    );
+  }
+
+  SideTitles get bottomTitlesMonthly => SideTitles(
+        showTitles: true,
+        reservedSize: 32,
+        interval: 5,
+        getTitlesWidget: bottomTitleWidgetsMonthly,
+      );
+
+  Widget bottomTitleWidgetsMonthly(double value, TitleMeta meta) {
+    var style = TextStyle(
+      color: TColor.gray,
+      fontSize: 12,
+    );
+    Widget text;
+    if (value % 5 == 0 && value >= 1 && value <= 30) {
+      text = Text('${value.toInt()}', style: style);
+    } else {
+      text = const Text('');
+    }
     return SideTitleWidget(
       meta: meta,
       space: 10,

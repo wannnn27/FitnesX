@@ -39,6 +39,16 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
       return;
     }
 
+    final weight = double.tryParse(txtWeight.text);
+    final height = double.tryParse(txtHeight.text);
+
+    if (weight == null || height == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Berat dan tinggi harus berupa angka!')),
+      );
+      return;
+    }
+
     try {
       final uid = FirebaseAuth.instance.currentUser?.uid;
       if (uid == null) throw Exception("User tidak ditemukan!");
@@ -46,8 +56,8 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
       await FirebaseFirestore.instance.collection('users').doc(uid).set({
         'gender': _selectedGender,
         'birthDate': txtDate.text,
-        'weight': double.tryParse(txtWeight.text) ?? 0.0,
-        'height': double.tryParse(txtHeight.text) ?? 0.0,
+        'weight': weight,
+        'height': height,
         'updatedAt': Timestamp.now(),
       }, SetOptions(merge: true));
 
@@ -82,9 +92,10 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                 Text(
                   "Ayo lengkapi profil Anda",
                   style: TextStyle(
-                      color: TColor.black,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700),
+                    color: TColor.black,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 Text(
                   "Ini akan membantu kami mengetahui lebih banyak tentang Anda!",
@@ -125,8 +136,9 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                                             child: Text(
                                               name,
                                               style: TextStyle(
-                                                  color: TColor.gray,
-                                                  fontSize: 14),
+                                                color: TColor.gray,
+                                                fontSize: 14,
+                                              ),
                                             ),
                                           ))
                                       .toList(),
@@ -158,7 +170,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                       SizedBox(height: media.width * 0.04),
                       Row(
                         children: [
-                          const Expanded(
+                          Expanded(
                             child: RoundTextField(
                               controller: txtWeight,
                               hitText: "Berat Badan Anda",
@@ -179,7 +191,8 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                             ),
                             child: Text(
                               "KG",
-                              style: TextStyle(color: TColor.white, fontSize: 12),
+                              style: TextStyle(
+                                  color: TColor.white, fontSize: 12),
                             ),
                           )
                         ],
@@ -187,7 +200,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                       SizedBox(height: media.width * 0.04),
                       Row(
                         children: [
-                          const Expanded(
+                          Expanded(
                             child: RoundTextField(
                               controller: txtHeight,
                               hitText: "Tinggi Badan Anda",
@@ -208,7 +221,8 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                             ),
                             child: Text(
                               "CM",
-                              style: TextStyle(color: TColor.white, fontSize: 12),
+                              style: TextStyle(
+                                  color: TColor.white, fontSize: 12),
                             ),
                           )
                         ],
