@@ -1,15 +1,25 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_animation_progress_bar/simple_animation_progress_bar.dart';
+import 'package:intl/intl.dart';
 
 import '../../common/colo_extension.dart';
-import '../../common/common.dart';
+import '../../common/common.dart'; // Pastikan common.dart memiliki dateToString (jika masih digunakan)
 import '../../common_widget/round_button.dart';
 
 class ResultView extends StatefulWidget {
   final DateTime date1;
   final DateTime date2;
-  const ResultView({super.key, required this.date1, required this.date2});
+  final String photoUrl1; // Menerima URL foto pertama
+  final String photoUrl2; // Menerima URL foto kedua
+
+  const ResultView({
+    super.key,
+    required this.date1,
+    required this.date2,
+    required this.photoUrl1,
+    required this.photoUrl2,
+  });
 
   @override
   State<ResultView> createState() => _ResultViewState();
@@ -18,29 +28,7 @@ class ResultView extends StatefulWidget {
 class _ResultViewState extends State<ResultView> {
   int selectButton = 0;
 
-  List imaArr = [
-    {
-      "title": "Front Facing",
-      "month_1_image": "assets/img/pp_1.png",
-      "month_2_image": "assets/img/pp_2.png",
-    },
-    {
-      "title": "Back Facing",
-      "month_1_image": "assets/img/pp_3.png",
-      "month_2_image": "assets/img/pp_4.png",
-    },
-    {
-      "title": "Left Facing",
-      "month_1_image": "assets/img/pp_5.png",
-      "month_2_image": "assets/img/pp_6.png",
-    },
-    {
-      "title": "Right Facing",
-      "month_1_image": "assets/img/pp_7.png",
-      "month_2_image": "assets/img/pp_8.png",
-    },
-  ];
-
+  // Data statistik (tetap hardcode untuk contoh ini)
   List statArr = [
     {
       "title": "Lose Weight",
@@ -77,7 +65,7 @@ class _ResultViewState extends State<ResultView> {
         backgroundColor: TColor.white,
         centerTitle: true,
         elevation: 0,
-        leading: InkWell(
+        leading: InkWell( // Tombol Kembali
           onTap: () {
             Navigator.pop(context);
           },
@@ -104,7 +92,9 @@ class _ResultViewState extends State<ResultView> {
         ),
         actions: [
           InkWell(
-            onTap: () {},
+            onTap: () {
+              print("Share button clicked");
+            },
             child: Container(
               margin: const EdgeInsets.all(8),
               height: 40,
@@ -122,7 +112,9 @@ class _ResultViewState extends State<ResultView> {
             ),
           ),
           InkWell(
-            onTap: () {},
+            onTap: () {
+              print("More options clicked for result view");
+            },
             child: Container(
               margin: const EdgeInsets.all(8),
               height: 40,
@@ -289,14 +281,14 @@ class _ResultViewState extends State<ResultView> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          dateToString(widget.date1, formatStr: "MMMM"),
+                          DateFormat('MMMMAsFactors', 'id').format(widget.date1), // Format bulan 1
                           style: TextStyle(
                               color: TColor.gray,
                               fontSize: 16,
                               fontWeight: FontWeight.w700),
                         ),
                         Text(
-                          dateToString(widget.date2, formatStr: "MMMM"),
+                          DateFormat('MMMMAsFactors', 'id').format(widget.date2), // Format bulan 2
                           style: TextStyle(
                               color: TColor.gray,
                               fontSize: 16,
@@ -304,85 +296,76 @@ class _ResultViewState extends State<ResultView> {
                         ),
                       ],
                     ),
-                    ListView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: imaArr.length,
-                        itemBuilder: (context, index) {
-                          var iObj = imaArr[index] as Map? ?? {};
-
-                          return Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                const SizedBox(
-                                  height: 8,
-                                ),
-                                Text(
-                                  iObj["title"].toString(),
-                                  style: TextStyle(
-                                      color: TColor.gray,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                                const SizedBox(
-                                  height: 8,
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: AspectRatio(
-                                        aspectRatio: 1,
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            color: TColor.lightGray,
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                          ),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            child: Image.asset(
-                                              iObj["month_1_image"].toString(),
-                                              width: double.maxFinite,
-                                              height: double.maxFinite,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
+                    // Tampilkan foto yang dipilih dari ComparisonView
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 8),
+                        Text(
+                          "Foto Perbandingan", // Label umum
+                          style: TextStyle(
+                              color: TColor.gray,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: AspectRatio(
+                                aspectRatio: 1,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: TColor.lightGray,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: Image.network(
+                                      widget.photoUrl1, // Tampilkan foto pertama
+                                      width: double.maxFinite,
+                                      height: double.maxFinite,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (context, error, stackTrace) {
+                                        return Center(child: Text("Gagal memuat", style: TextStyle(color: TColor.gray)));
+                                      },
                                     ),
-                                    const SizedBox(
-                                      width: 15,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 15),
+                            Expanded(
+                              child: AspectRatio(
+                                aspectRatio: 1,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: TColor.lightGray,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: Image.network(
+                                      widget.photoUrl2, // Tampilkan foto kedua
+                                      width: double.maxFinite,
+                                      height: double.maxFinite,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (context, error, stackTrace) {
+                                        return Center(child: Text("Gagal memuat", style: TextStyle(color: TColor.gray)));
+                                      },
                                     ),
-                                    Expanded(
-                                      child: AspectRatio(
-                                        aspectRatio: 1,
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            color: TColor.lightGray,
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                          ),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            child: Image.asset(
-                                              iObj["month_2_image"].toString(),
-                                              width: double.maxFinite,
-                                              height: double.maxFinite,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                )
-                              ]);
-                        }),
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
                     RoundButton(
                         title: "Back to Home",
                         onPressed: () {
+                          // Pop dari ResultView
                           Navigator.pop(context);
                         }),
                     const SizedBox(
@@ -411,14 +394,6 @@ class _ResultViewState extends State<ResultView> {
                                   response.lineBarSpots == null) {
                                 return;
                               }
-                              // if (event is FlTapUpEvent) {
-                              //   final spotIndex =
-                              //       response.lineBarSpots!.first.spotIndex;
-                              //   showingTooltipOnSpots.clear();
-                              //   setState(() {
-                              //     showingTooltipOnSpots.add(spotIndex);
-                              //   });
-                              // }
                             },
                             mouseCursorResolver: (FlTouchEvent event,
                                 LineTouchResponse? response) {
@@ -507,14 +482,14 @@ class _ResultViewState extends State<ResultView> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          dateToString(widget.date1, formatStr: "MMMM"),
+                          DateFormat('MMMMAsFactors', 'id').format(widget.date1),
                           style: TextStyle(
                               color: TColor.gray,
                               fontSize: 16,
                               fontWeight: FontWeight.w700),
                         ),
                         Text(
-                          dateToString(widget.date2, formatStr: "MMMM"),
+                          DateFormat('MMMMAsFactors', 'id').format(widget.date2),
                           style: TextStyle(
                               color: TColor.gray,
                               fontSize: 16,
@@ -558,20 +533,17 @@ class _ResultViewState extends State<ResultView> {
                                             color: TColor.gray, fontSize: 12),
                                       ),
                                     ),
-
                                     SimpleAnimationProgressBar(
-                          height: 10,
-                          width: media.width - 120,
-                          backgroundColor: TColor.primaryColor1,
-                          foregroundColor: const Color(0xffFFB2B1) ,
-                          ratio: (double.tryParse(iObj["diff_per"].toString()) ?? 0.0) / 100.0 ,
-                          direction: Axis.horizontal,
-                          curve: Curves.fastLinearToSlowEaseIn,
-                          duration: const Duration(seconds: 3),
-                          borderRadius: BorderRadius.circular(5),
-                          
-                        ),
-
+                                      height: 10,
+                                      width: media.width - 120,
+                                      backgroundColor: TColor.primaryColor1,
+                                      foregroundColor: const Color(0xffFFB2B1),
+                                      ratio: (double.tryParse(iObj["diff_per"].toString()) ?? 0.0) / 100.0,
+                                      direction: Axis.horizontal,
+                                      curve: Curves.fastLinearToSlowEaseIn,
+                                      duration: const Duration(seconds: 3),
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
                                     SizedBox(
                                       width: 25,
                                       child: Text(
@@ -587,7 +559,6 @@ class _ResultViewState extends State<ResultView> {
                                 )
                               ]);
                         }),
-                 
                     RoundButton(
                         title: "Back to Home",
                         onPressed: () {
@@ -605,6 +576,7 @@ class _ResultViewState extends State<ResultView> {
     );
   }
 
+  // --- Fungsi-fungsi untuk grafik ---
   LineTouchData get lineTouchData1 => LineTouchData(
         handleBuiltInTouches: true,
         touchTooltipData: LineTouchTooltipData(

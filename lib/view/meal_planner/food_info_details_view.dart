@@ -4,10 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:readmore/readmore.dart';
 
 import '../../common_widget/food_step_detail_row.dart';
+// Import file baru untuk menambahkan makanan yang sudah ada
+import 'add_existing_food_to_schedule_view.dart'; // REKOMENDASI: Ubah import ini
 
 class FoodInfoDetailsView extends StatefulWidget {
-  final Map mObj;
-  final Map dObj;
+  final Map mObj; // Ini adalah objek kategori meal_type dari MealPlannerView (e.g., Breakfast, Lunch)
+  final Map dObj; // Ini adalah objek detail makanan yang dipilih (e.g., Pancake Blueberry)
+
   const FoodInfoDetailsView({super.key, required this.dObj, required this.mObj});
 
   @override
@@ -15,35 +18,23 @@ class FoodInfoDetailsView extends StatefulWidget {
 }
 
 class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
-  List nutritionArr = [
-    {"image": "assets/img/burn.png", "title": "180kKal"},
-    {"image": "assets/img/egg.png", "title": "30g lemak"}, // Diterjemahkan
-    {"image": "assets/img/proteins.png", "title": "20g protein"}, // Diterjemahkan
-    {"image": "assets/img/carbo.png", "title": "50g karbo"}, // Diterjemahkan
-  ];
+  List nutritionArr = [];
+  List ingredientsArr = [];
+  List stepArr = [];
+  String description = "";
 
-  List ingredientsArr = [
-    {"image": "assets/img/flour.png", "title": "Tepung Terigu", "value": "100grm"}, // Diterjemahkan
-    {"image": "assets/img/sugar.png", "title": "Gula", "value": "3 sdm"}, // Diterjemahkan
-    {"image": "assets/img/baking_soda.png", "title": "Soda Kue", "value": "2tsp"}, // Diterjemahkan
-    {"image": "assets/img/eggs.png", "title": "Telur", "value": "2 butir"}, // Diterjemahkan
-  ];
-
-  List stepArr = [
-    {"no": "1", "detail": "Siapkan semua bahan yang dibutuhkan"}, // Diterjemahkan
-    {"no": "2", "detail": "Campur tepung, gula, garam, dan baking powder"}, // Diterjemahkan
-    {
-      "no": "3",
-      "detail":
-          "Di tempat terpisah, campur telur dan susu cair hingga tercampur rata" // Diterjemahkan
-    },
-    {
-      "no": "4",
-      "detail":
-          "Masukkan campuran telur dan susu ke dalam bahan kering, Aduk hingga halus dan rata" // Diterjemahkan
-    },
-    {"no": "5", "detail": "Siapkan semua bahan yang dibutuhkan"}, // Diterjemahkan
-  ];
+  @override
+  void initState() {
+    super.initState();
+    // Inisialisasi data dari dObj.
+    // Penting: Pastikan 'nutrition', 'ingredients', 'steps', 'description'
+    // ada di dalam Map dObj saat data dimuat ke sini.
+    // Jika tidak ada, fallback ke list/string kosong.
+    nutritionArr = List.from(widget.dObj["nutrition"] ?? []);
+    ingredientsArr = List.from(widget.dObj["ingredients"] ?? []);
+    stepArr = List.from(widget.dObj["steps"] ?? []);
+    description = widget.dObj["description"] ?? "Tidak ada deskripsi tersedia.";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +71,9 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
               ),
               actions: [
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    print("More options clicked for food details");
+                  },
                   child: Container(
                     margin: const EdgeInsets.all(8),
                     height: 40,
@@ -181,14 +174,14 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    widget.dObj["nama"].toString(),
+                                    widget.dObj["name"].toString(),
                                     style: TextStyle(
                                         color: TColor.black,
                                         fontSize: 16,
                                         fontWeight: FontWeight.w700),
                                   ),
                                   Text(
-                                    "oleh Adi Arwan Syah", // Diterjemahkan
+                                    "oleh Adi Arwan Syah",
                                     style: TextStyle(
                                         color: TColor.gray, fontSize: 12),
                                   ),
@@ -196,7 +189,9 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                               ),
                             ),
                             TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                print("Favorite button clicked for ${widget.dObj["name"]}");
+                              },
                               child: Image.asset(
                                 "assets/img/fav.png",
                                 width: 15,
@@ -213,7 +208,7 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15),
                         child: Text(
-                          "Nutrisi", 
+                          "Nutrisi",
                           style: TextStyle(
                               color: TColor.black,
                               fontSize: 16,
@@ -272,7 +267,7 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15),
                         child: Text(
-                          "Deskripsi", 
+                          "Deskripsi",
                           style: TextStyle(
                               color: TColor.black,
                               fontSize: 16,
@@ -285,12 +280,12 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15),
                         child: ReadMoreText(
-                          'Pancake adalah sarapan favorit beberapa orang, siapa yang tidak suka pancake? Apalagi dengan siraman madu asli di atas pancake, tentu saja semua orang menyukainya! Selain itu Pancake adalah sarapan favorit beberapa orang, siapa yang tidak suka pancake? Apalagi dengan siraman madu asli di atas pancake, tentu saja semua orang menyukainya! Selain itu', // Diterjemahkan
+                          description, // Menggunakan deskripsi dari dObj
                           trimLines: 4,
                           colorClickableText: TColor.black,
                           trimMode: TrimMode.Line,
-                          trimCollapsedText: ' Baca Selengkapnya ...', 
-                          trimExpandedText: ' Baca Lebih Sedikit', 
+                          trimCollapsedText: ' Baca Selengkapnya ...',
+                          trimExpandedText: ' Baca Lebih Sedikit',
                           style: TextStyle(
                             color: TColor.gray,
                             fontSize: 12,
@@ -308,16 +303,18 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Bahan yang Anda\nAkan Butuhkan", 
+                              "Bahan yang Anda\nAkan Butuhkan",
                               style: TextStyle(
                                   color: TColor.black,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700),
                             ),
                             TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                print("View all ingredients clicked");
+                              },
                               child: Text(
-                                "${ingredientsArr.length} Item", 
+                                "${ingredientsArr.length} Item",
                                 style:
                                     TextStyle(color: TColor.gray, fontSize: 12),
                               ),
@@ -381,16 +378,18 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Langkah demi Langkah", 
+                              "Langkah demi Langkah",
                               style: TextStyle(
                                   color: TColor.black,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700),
                             ),
                             TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                print("View all steps clicked");
+                              },
                               child: Text(
-                                "${stepArr.length} Langkah", 
+                                "${stepArr.length} Langkah",
                                 style:
                                     TextStyle(color: TColor.gray, fontSize: 12),
                               ),
@@ -426,8 +425,26 @@ class _FoodInfoDetailsViewState extends State<FoodInfoDetailsView> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15),
                         child: RoundButton(
-                            title: "Tambahkan ke Makanan ${widget.mObj["name"]}", 
-                            onPressed: () {}),
+                          title: "Tambahkan ke Makanan ${widget.mObj["name"]}",
+                          onPressed: () async {
+                            // Navigasi ke halaman konfirmasi penambahan makanan yang sudah ada
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AddExistingFoodToScheduleView( // REKOMENDASI: Ubah nama kelas
+                                  foodData: widget.dObj, // Passing detail makanan
+                                  mealInfo: widget.mObj, // Passing informasi tipe makanan (Breakfast/Lunch/etc)
+                                  selectedDate: DateTime.now(), // Anda mungkin ingin mengambil selectedDate dari MealScheduleView
+                                ),
+                              ),
+                            );
+                            if (result == true) {
+                              // Jika AddExistingFoodToScheduleView berhasil menyimpan, pop FoodInfoDetailsView
+                              // sehingga MealFoodDetailsView bisa otomatis pop juga jika diinginkan
+                              Navigator.pop(context, true);
+                            }
+                          },
+                        ),
                       ),
                     ],
                   ),
