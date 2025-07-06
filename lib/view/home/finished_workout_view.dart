@@ -5,8 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fitness/common/colo_extension.dart';
 import 'package:fitness/common_widget/round_button.dart';
-// PERBAIKAN: Mengubah path import
 import 'package:fitness/view/main_tab/main_tab_view.dart';
+import 'package:intl/intl.dart'; // Impor untuk format tanggal
 
 class FinishedWorkoutView extends StatefulWidget {
   final int exercisesDone;
@@ -28,7 +28,13 @@ class _FinishedWorkoutViewState extends State<FinishedWorkoutView> {
   @override
   void initState() {
     super.initState();
-    _saveWorkoutHistory();
+    // Simpan semua data saat halaman ini dibuka
+    _saveAllWorkoutData();
+  }
+
+  Future<void> _saveAllWorkoutData() async {
+    await _saveWorkoutHistory();
+    await _updateDailyCalories();
   }
 
   Future<void> _saveWorkoutHistory() async {
@@ -49,6 +55,39 @@ class _FinishedWorkoutViewState extends State<FinishedWorkoutView> {
       });
     } catch (e) {
       print("Gagal menyimpan riwayat latihan: $e");
+    }
+  }
+
+  // --- FUNGSI BARU UNTUK MEMPERBARUI KALORI HARIAN ---
+  Future<void> _updateDailyCalories() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    // Buat ID dokumen berdasarkan tanggal hari ini (misal: '2025-07-07')
+    final String todayDocId = DateFormat('yyyy-MM-dd').format(DateTime.now());
+
+    final docRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('daily_stats') // Koleksi baru untuk statistik harian
+        .doc(todayDocId);
+
+    try {
+      // Gunakan transaksi untuk keamanan data
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        final snapshot = await transaction.get(docRef);
+
+        if (!snapshot.exists) {
+          // Jika dokumen hari ini belum ada, buat baru
+          transaction.set(docRef, {'caloriesBurned': widget.caloriesBurned});
+        } else {
+          // Jika sudah ada, tambahkan kalori yang baru terbakar
+          final double newTotalCalories = (snapshot.data()!['caloriesBurned'] ?? 0) + widget.caloriesBurned;
+          transaction.update(docRef, {'caloriesBurned': newTotalCalories});
+        }
+      });
+    } catch (e) {
+      print("Gagal memperbarui kalori harian: $e");
     }
   }
   
@@ -75,18 +114,12 @@ class _FinishedWorkoutViewState extends State<FinishedWorkoutView> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          "LATIHAN SELESAI!",
-                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                        ),
+                        const Text("LATIHAN SELESAI!", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                         TextButton.icon(
                           onPressed: () {},
                           icon: Icon(Icons.share, color: TColor.primaryColor1),
                           label: Text("Bagikan", style: TextStyle(color: TColor.primaryColor1)),
-                          style: TextButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                          ),
+                          style: TextButton.styleFrom(backgroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
                         ),
                       ],
                     ),
@@ -108,11 +141,7 @@ class _FinishedWorkoutViewState extends State<FinishedWorkoutView> {
                 child: RoundButton(
                   title: "Kembali ke Beranda",
                   onPressed: () {
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (context) => const MainTabView()),
-                      (route) => false,
-                    );
+                    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MainTabView()), (route) => false);
                   },
                 ),
               ),
