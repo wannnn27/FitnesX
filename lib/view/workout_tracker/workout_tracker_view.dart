@@ -247,7 +247,7 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => WorkoutDetailView(
+                                  builder: (context) => const WorkoutDetailView(
                                     dObj: {
                                       "title": "Daily Workout",
                                       "exercises": "10 Exercises",

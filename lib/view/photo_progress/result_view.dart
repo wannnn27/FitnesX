@@ -4,7 +4,7 @@ import 'package:simple_animation_progress_bar/simple_animation_progress_bar.dart
 import 'package:intl/intl.dart';
 
 import '../../common/colo_extension.dart';
-import '../../common/common.dart'; // Pastikan common.dart memiliki dateToString (jika masih digunakan)
+// Pastikan common.dart memiliki dateToString (jika masih digunakan)
 import '../../common_widget/round_button.dart';
 
 class ResultView extends StatefulWidget {

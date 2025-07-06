@@ -145,7 +145,7 @@ class _AddExistingFoodToScheduleViewState extends State<AddExistingFoodToSchedul
             style: TextStyle(fontSize: 16, color: TColor.black, fontWeight: FontWeight.w500),
           ),
           Text(
-            "${value.toStringAsFixed(0)} ${unit}",
+            "${value.toStringAsFixed(0)} $unit",
             style: TextStyle(fontSize: 16, color: color, fontWeight: FontWeight.w600),
           ),
         ],

@@ -1,11 +1,13 @@
+// lib/view/workout_tracker/workout_detail_view.dart
+
+import 'package:flutter/material.dart';
 import 'package:fitness/common/colo_extension.dart';
 import 'package:fitness/common_widget/icon_title_next_row.dart';
 import 'package:fitness/common_widget/round_button.dart';
 import 'package:fitness/view/workout_tracker/exercises_stpe_details.dart';
 import 'package:fitness/view/workout_tracker/workout_schedule_view.dart';
-import 'package:flutter/material.dart';
-
 import '../../common_widget/exercises_set_section.dart';
+import 'package:fitness/view/workout_tracker/workout_in_progress_view.dart';
 
 class WorkoutDetailView extends StatefulWidget {
   final Map dObj;
@@ -16,73 +18,70 @@ class WorkoutDetailView extends StatefulWidget {
 }
 
 class _WorkoutDetailViewState extends State<WorkoutDetailView> {
-  List latestArr = [
-    {
-      "image": "assets/img/Workout1.png",
-      "title": "Fullbody Workout",
-      "time": "Today, 03:00pm"
-    },
-    {
-      "image": "assets/img/Workout2.png",
-      "title": "Upperbody Workout",
-      "time": "June 05, 02:00pm"
-    },
-  ];
-
   List youArr = [
     {"image": "assets/img/barbell.png", "title": "Barbell"},
     {"image": "assets/img/skipping_rope.png", "title": "Skipping Rope"},
     {"image": "assets/img/bottle.png", "title": "Bottle 1 Liters"},
   ];
 
+  // DATA DIPERBARUI: Menambahkan 'description' dan 'video_url'
   List exercisesArr = [
     {
       "name": "Set 1",
       "set": [
-        {"image": "assets/img/img_1.png", "title": "Warm Up", "value": "05:00"},
+        {
+          "image": "assets/img/img_1.png",
+          "title": "Warm Up",
+          "value": "00:10", // Durasi dipersingkat untuk tes
+          "description": "Mulailah dengan pemanasan ringan untuk mempersiapkan otot Anda.",
+          "video_url": "https://videos.pexels.com/video-files/4761416/4761416-uhd_1440_2732_25fps.mp4"
+        },
         {
           "image": "assets/img/img_2.png",
           "title": "Jumping Jack",
-          "value": "12x"
+          "value": "12x",
+          "description": "Lompat dengan membuka kaki dan tangan, lalu kembali ke posisi semula.",
+          "video_url": "https://videos.pexels.com/video-files/3048952/3048952-uhd_2560_1440_24fps.mp4"
         },
-        {"image": "assets/img/img_1.png", "title": "Skipping", "value": "15x"},
-        {"image": "assets/img/img_2.png", "title": "Squats", "value": "20x"},
+        {
+          "image": "assets/img/img_1.png",
+          "title": "Skipping",
+          "value": "15x",
+          "description": "Lakukan lompat tali dengan ritme yang stabil.",
+          "video_url": "https://videos.pexels.com/video-files/8026879/8026879-uhd_1440_2732_25fps.mp4"
+        },
+        {
+          "image": "assets/img/img_2.png",
+          "title": "Squats",
+          "value": "20x",
+          "description": "Jaga punggung tetap lurus saat menurunkan pinggul seperti akan duduk.",
+          "video_url": "https://videos.pexels.com/video-files/4838220/4838220-uhd_1440_2560_24fps.mp4"
+        },
         {
           "image": "assets/img/img_1.png",
           "title": "Arm Raises",
-          "value": "00:53"
+          "value": "00:15",
+          "description": "Angkat kedua lengan lurus ke depan setinggi bahu.",
+          "video_url": "https://videos.pexels.com/video-files/3327959/3327959-hd_1920_1080_24fps.mp4"
         },
         {
           "image": "assets/img/img_2.png",
           "title": "Rest and Drink",
-          "value": "02:00"
+          "value": "00:20",
+          "description": "Waktunya istirahat sejenak. Minumlah air untuk menjaga hidrasi.",
+          "video_url": "https://videos.pexels.com/video-files/2786550/2786550-uhd_2560_1440_25fps.mp4"
         },
       ],
     },
-    {
-      "name": "Set 2",
-      "set": [
-        {"image": "assets/img/img_1.png", "title": "Warm Up", "value": "05:00"},
-        {
-          "image": "assets/img/img_2.png",
-          "title": "Jumping Jack",
-          "value": "12x"
-        },
-        {"image": "assets/img/img_1.png", "title": "Skipping", "value": "15x"},
-        {"image": "assets/img/img_2.png", "title": "Squats", "value": "20x"},
-        {
-          "image": "assets/img/img_1.png",
-          "title": "Arm Raises",
-          "value": "00:53"
-        },
-        {
-          "image": "assets/img/img_2.png",
-          "title": "Rest and Drink",
-          "value": "02:00"
-        },
-      ],
-    }
   ];
+
+  late List allExercises;
+
+  @override
+  void initState() {
+    super.initState();
+    allExercises = exercisesArr.expand((set) => set['set'] as List).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -98,9 +97,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
               centerTitle: true,
               elevation: 0,
               leading: InkWell(
-                onTap: () {
-                  Navigator.pop(context);
-                },
+                onTap: () => Navigator.pop(context),
                 child: Container(
                   margin: const EdgeInsets.all(8),
                   height: 40,
@@ -109,34 +106,10 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                   decoration: BoxDecoration(
                       color: TColor.lightGray,
                       borderRadius: BorderRadius.circular(10)),
-                  child: Image.asset(
-                    "assets/img/black_btn.png",
-                    width: 15,
-                    height: 15,
-                    fit: BoxFit.contain,
-                  ),
+                  child: Image.asset("assets/img/black_btn.png",
+                      width: 15, height: 15, fit: BoxFit.contain),
                 ),
               ),
-              actions: [
-                InkWell(
-                  onTap: () {},
-                  child: Container(
-                    margin: const EdgeInsets.all(8),
-                    height: 40,
-                    width: 40,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                        color: TColor.lightGray,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: Image.asset(
-                      "assets/img/more_btn.png",
-                      width: 15,
-                      height: 15,
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                )
-              ],
             ),
             SliverAppBar(
               backgroundColor: Colors.transparent,
@@ -170,20 +143,8 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                 SingleChildScrollView(
                   child: Column(
                     children: [
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        width: 50,
-                        height: 4,
-                        decoration: BoxDecoration(
-                            color: TColor.gray.withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(3)),
-                      ),
-                      SizedBox(
-                        height: media.width * 0.05,
-                      ),
-                      Row(
+                       SizedBox(height: media.width * 0.05),
+                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
@@ -205,107 +166,9 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                               ],
                             ),
                           ),
-                          TextButton(
-                            onPressed: () {},
-                            child: Image.asset(
-                              "assets/img/fav.png",
-                              width: 15,
-                              height: 15,
-                              fit: BoxFit.contain,
-                            ),
-                          )
                         ],
                       ),
-                      SizedBox(
-                        height: media.width * 0.05,
-                      ),
-                      IconTitleNextRow(
-                          icon: "assets/img/time.png",
-                          title: "Schedule Workout",
-                          time: "5/27, 09:00 AM",
-                          color: TColor.primaryColor2.withOpacity(0.3),
-                          onPressed: () {
-
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => const WorkoutScheduleView() )  );
-                          }),
-                      SizedBox(
-                        height: media.width * 0.02,
-                      ),
-                      IconTitleNextRow(
-                          icon: "assets/img/difficulity.png",
-                          title: "Difficulity",
-                          time: "Beginner",
-                          color: TColor.secondaryColor2.withOpacity(0.3),
-                          onPressed: () {}),
-                      SizedBox(
-                        height: media.width * 0.05,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "You'll Need",
-                            style: TextStyle(
-                                color: TColor.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700),
-                          ),
-                          TextButton(
-                            onPressed: () {},
-                            child: Text(
-                              "${youArr.length} Items",
-                              style:
-                                  TextStyle(color: TColor.gray, fontSize: 12),
-                            ),
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                        height: media.width * 0.5,
-                        child: ListView.builder(
-                            padding: EdgeInsets.zero,
-                            scrollDirection: Axis.horizontal,
-                            shrinkWrap: true,
-                            itemCount: youArr.length,
-                            itemBuilder: (context, index) {
-                              var yObj = youArr[index] as Map? ?? {};
-                              return Container(
-                                  margin: const EdgeInsets.all(8),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        height: media.width * 0.35,
-                                        width: media.width * 0.35,
-                                        decoration: BoxDecoration(
-                                            color: TColor.lightGray,
-                                            borderRadius:
-                                                BorderRadius.circular(15)),
-                                        alignment: Alignment.center,
-                                        child: Image.asset(
-                                          yObj["image"].toString(),
-                                          width: media.width * 0.2,
-                                          height: media.width * 0.2,
-                                          fit: BoxFit.contain,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          yObj["title"].toString(),
-                                          style: TextStyle(
-                                              color: TColor.black,
-                                              fontSize: 12),
-                                        ),
-                                      )
-                                    ],
-                                  ));
-                            }),
-                      ),
-                      SizedBox(
-                        height: media.width * 0.05,
-                      ),
+                      SizedBox(height: media.width * 0.05),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -319,7 +182,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                           TextButton(
                             onPressed: () {},
                             child: Text(
-                              "${youArr.length} Sets",
+                              "${exercisesArr.length} Sets",
                               style:
                                   TextStyle(color: TColor.gray, fontSize: 12),
                             ),
@@ -347,9 +210,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                               },
                             );
                           }),
-                      SizedBox(
-                        height: media.width * 0.1,
-                      ),
+                      SizedBox(height: media.width * 0.1),
                     ],
                   ),
                 ),
@@ -358,7 +219,18 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      RoundButton(title: "Start Workout", onPressed: () {})
+                      RoundButton(
+                          title: "Start Workout",
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => WorkoutInProgressView(
+                                  exercises: allExercises,
+                                ),
+                              ),
+                            );
+                          })
                     ],
                   ),
                 )

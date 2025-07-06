@@ -173,7 +173,7 @@ class _AddNewCustomFoodViewState extends State<AddNewCustomFoodView> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(Icons.add_a_photo, color: TColor.gray, size: 40),
-                            SizedBox(height: 8),
+                            const SizedBox(height: 8),
                             Text("Tambah Gambar", style: TextStyle(color: TColor.gray)),
                           ],
                         ),
