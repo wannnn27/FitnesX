@@ -59,7 +59,7 @@ class _OnBoardingViewState extends State<OnBoardingView> {
     // Dapatkan ukuran layar perangkat
     final screenSize = MediaQuery.of(context).size;
     // Periksa apakah aplikasi berjalan di web
-    final isWeb = kIsWeb;
+    const isWeb = kIsWeb;
 
     // Sesuaikan ukuran elemen UI berdasarkan platform (web/mobile) - DIPERKECIL
     double buttonSize = isWeb ? 50 : 50;  // Diperkecil dari 80/60 menjadi 50/50

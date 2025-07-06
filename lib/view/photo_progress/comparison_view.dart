@@ -75,8 +75,7 @@ class _ComparisonViewState extends State<ComparisonView> {
               onPrimary: Colors.white, // Warna teks di header
               surface: TColor.white, // Warna background date picker
               onSurface: TColor.black, // Warna teks tanggal
-            ),
-            dialogBackgroundColor: TColor.white,
+            ), dialogTheme: DialogThemeData(backgroundColor: TColor.white),
           ),
           child: child!,
         );
@@ -285,7 +284,7 @@ class _ComparisonViewState extends State<ComparisonView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.image, color: TColor.gray, size: 40),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     placeholderText,
                     style: TextStyle(color: TColor.gray),

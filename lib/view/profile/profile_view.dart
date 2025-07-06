@@ -626,9 +626,9 @@ class _ProfileViewState extends State<ProfileView> {
                                   ),
                                   CustomAnimatedToggleSwitch<bool>(
                                     current: positive,
-                                    values: [false, true],
+                                    values: const [false, true],
                                     dif: 0.0,
-                                    indicatorSize: Size.square(30.0),
+                                    indicatorSize: const Size.square(30.0),
                                     animationDuration:
                                         const Duration(milliseconds: 200),
                                     animationCurve: Curves.linear,

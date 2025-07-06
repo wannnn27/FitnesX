@@ -494,8 +494,8 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
                                     errorBuilder: (context, error, stackTrace) {
                                       return Container( // Fallback jika gambar gagal dimuat
                                         color: TColor.gray.withOpacity(0.2),
-                                        child: Icon(Icons.broken_image, color: TColor.gray),
                                         alignment: Alignment.center,
+                                        child: Icon(Icons.broken_image, color: TColor.gray),
                                       );
                                     },
                                   ),
