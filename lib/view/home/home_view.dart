@@ -1,5 +1,3 @@
-// lib/view/home/home_view.dart
-
 import 'package:dotted_dashed_line/dotted_dashed_line.dart';
 import 'package:fitness/common_widget/round_button.dart';
 import 'package:fitness/common_widget/workout_row.dart';
@@ -23,29 +21,6 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  List lastWorkoutArr = [
-    {
-      "name": "Latihan Seluruh Tubuh",
-      "image": "assets/img/Workout1.png",
-      "kcal": "180",
-      "time": "20",
-      "progress": 0.3
-    },
-    {
-      "name": "Latihan Tubuh Bagian Bawah",
-      "image": "assets/img/Workout2.png",
-      "kcal": "200",
-      "time": "30",
-      "progress": 0.4
-    },
-    {
-      "name": "Ab Workout",
-      "image": "assets/img/Workout3.png",
-      "kcal": "300",
-      "time": "40",
-      "progress": 0.7
-    },
-  ];
   List<int> showingTooltipOnSpots = [21];
 
   List<FlSpot> get allSpots => const [
@@ -81,6 +56,7 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Future<void> getUserData() async {
+    if(!mounted) return;
     setState(() => _isLoading = true);
     try {
       final user = FirebaseAuth.instance.currentUser;
@@ -93,24 +69,14 @@ class _HomeViewState extends State<HomeView> {
           userHeight = double.tryParse(data['height']?.toString() ?? "");
           userWeight = double.tryParse(data['weight']?.toString() ?? "");
           hitungBMI();
-        } else {
-          _setDefaultUserData();
         }
-      } else {
-        _setDefaultUserData();
       }
     } catch (e) {
-      _setDefaultUserData();
+      print(e);
     }
-    setState(() => _isLoading = false);
-  }
-
-  void _setDefaultUserData() {
-    userName = "User";
-    userHeight = null;
-    userWeight = null;
-    userBMI = null;
-    bmiStatus = "";
+    if(mounted) {
+      setState(() => _isLoading = false);
+    }
   }
 
   void hitungBMI() {
@@ -120,7 +86,7 @@ class _HomeViewState extends State<HomeView> {
       bmiStatus = cekBMIStatus(userBMI!);
     } else {
       userBMI = null;
-      bmiStatus = "";
+      bmiStatus = "Data tidak lengkap";
     }
   }
 
@@ -209,7 +175,7 @@ class _HomeViewState extends State<HomeView> {
                                 children: [
                                   Text("BMI (Body Mass Index)", style: TextStyle(color: TColor.white, fontSize: 14, fontWeight: FontWeight.w700)),
                                   Text(
-                                    userBMI == null ? "Lengkapi data tinggi/berat" : (bmiStatus.isNotEmpty ? bmiStatus : "Menghitung..."),
+                                    bmiStatus.isNotEmpty ? bmiStatus : "Menghitung...",
                                     style: TextStyle(color: TColor.white.withOpacity(0.7), fontSize: 12),
                                   ),
                                   const SizedBox(height: 6),
@@ -559,29 +525,44 @@ class _HomeViewState extends State<HomeView> {
                     TextButton(onPressed: () {}, child: Text("Lihat Selengkapnya", style: TextStyle(color: TColor.gray, fontSize: 14, fontWeight: FontWeight.w700))),
                   ],
                 ),
-                ListView.builder(
-                    padding: EdgeInsets.zero,
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: lastWorkoutArr.length,
-                    itemBuilder: (context, index) {
-                      var wObj = lastWorkoutArr[index] as Map? ?? {};
-                      return InkWell(
-                          onTap: () {
-                            // PERBAIKAN: Menambahkan data dummy
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => FinishedWorkoutView(
-                                  exercisesDone: 12, // Contoh
-                                  duration: const Duration(minutes: 25, seconds: 30), // Contoh
-                                  caloriesBurned: 210.5, // Contoh
-                                ),
-                              ),
-                            );
-                          },
-                          child: WorkoutRow(wObj: wObj));
-                    }),
+                StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(FirebaseAuth.instance.currentUser?.uid)
+                      .collection('workout_history')
+                      .orderBy('timestamp', descending: true)
+                      .limit(3)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 20.0),
+                        child: Center(child: Text("Mulai latihan pertamamu!")),
+                      );
+                    }
+
+                    return ListView.builder(
+                        padding: EdgeInsets.zero,
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: snapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          var doc = snapshot.data!.docs[index];
+                          var wObj = {
+                            "name": doc['name'] ?? 'Latihan',
+                            "image": doc['image'] ?? 'assets/img/Workout1.png',
+                            "kcal": doc['calories'] ?? '0',
+                            "time": doc['duration_minutes']?.toString() ?? '0',
+                            "progress": 0.5,
+                          };
+                          
+                          return WorkoutRow(wObj: wObj);
+                        });
+                  },
+                ),
                 SizedBox(height: media.width * 0.1),
               ],
             ),
