@@ -5,10 +5,13 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_animation_progress_bar/simple_animation_progress_bar.dart';
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../common/colo_extension.dart';
 import 'activity_tracker_view.dart';
 import 'finished_workout_view.dart';
 import 'notification_view.dart';
+import 'bmi_result_view.dart'; // Tambahkan import ini!
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -85,6 +88,78 @@ class _HomeViewState extends State<HomeView> {
     {"title": "4pm - now", "subtitle": "900ml"},
   ];
 
+  String userName = "";
+  bool _isLoading = true;
+
+  // BMI related
+  double? userHeight; // in cm
+  double? userWeight; // in kg
+  double? userBMI;
+  String bmiStatus = "";
+
+  @override
+  void initState() {
+    super.initState();
+    getUserData();
+  }
+
+  Future<void> getUserData() async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+        if (doc.exists) {
+          Map<String, dynamic> data = doc.data()!;
+          // Ambil nama
+          userName = "${data['firstName'] ?? ''} ${data['lastName'] ?? ''}".trim();
+          if (userName.isEmpty && data['name'] != null) {
+            userName = data['name'];
+          }
+          // Ambil tinggi & berat
+          userHeight = double.tryParse(data['height']?.toString() ?? "");
+          userWeight = double.tryParse(data['weight']?.toString() ?? "");
+          hitungBMI();
+        } else {
+          userName = "User";
+          userHeight = null;
+          userWeight = null;
+          userBMI = null;
+          bmiStatus = "";
+        }
+      }
+    } catch (e) {
+      userName = "User";
+      userHeight = null;
+      userWeight = null;
+      userBMI = null;
+      bmiStatus = "";
+    }
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  void hitungBMI() {
+    if (userHeight != null && userWeight != null && userHeight! > 0) {
+      final tinggiMeter = userHeight! / 100;
+      userBMI = userWeight! / (tinggiMeter * tinggiMeter);
+      bmiStatus = cekBMIStatus(userBMI!);
+    } else {
+      userBMI = null;
+      bmiStatus = "";
+    }
+  }
+
+  String cekBMIStatus(double bmi) {
+    if (bmi < 18.5) return "Kekurangan Berat Badan";
+    if (bmi < 24.9) return "Berat Badan Normal";
+    if (bmi < 29.9) return "Kelebihan Berat Badan";
+    return "Obesitas";
+  }
+
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
@@ -120,25 +195,32 @@ class _HomeViewState extends State<HomeView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ...existing code...
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Selamat Datang Kembali,",
-                          style: TextStyle(color: TColor.gray, fontSize: 12),
-                        ),
-                        Text(
-                          "Adi Arwan Syah",
-                          style: TextStyle(
-                              color: TColor.black,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w700),
-                        ),
-                      ],
+                    Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Selamat Datang Kembali,",
+                            style: TextStyle(color: TColor.gray, fontSize: 12),
+                          ),
+                          _isLoading
+                              ? SizedBox(
+                                  height: 20,
+                                  width: 80,
+                                  child: LinearProgressIndicator(),
+                                )
+                              : Text(
+                                  userName.isNotEmpty ? userName : "User",
+                                  style: TextStyle(
+                                      color: TColor.black,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w700),
+                                ),
+                        ],
+                      ),
                     ),
                     IconButton(
                         onPressed: () {
@@ -160,78 +242,141 @@ class _HomeViewState extends State<HomeView> {
                 SizedBox(
                   height: media.width * 0.05,
                 ),
+                // BMI Card
                 Container(
                   height: media.width * 0.4,
                   decoration: BoxDecoration(
-                      gradient: LinearGradient(colors: TColor.primaryG),
-                      borderRadius: BorderRadius.circular(media.width * 0.075)),
-                  child: Stack(alignment: Alignment.center, children: [
-                    Image.asset(
-                      "assets/img/bg_dots.png",
-                      height: media.width * 0.4,
-                      width: double.maxFinite,
-                      fit: BoxFit.fitHeight,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 25, horizontal: 25),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "BMI (Body Mass Index)",
-                                style: TextStyle(
-                                    color: TColor.white,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700),
-                              ),
-                              Text(
-                                "Berat badan Anda normal",
-                                style: TextStyle(
-                                    color: TColor.white.withOpacity(0.7),
-                                    fontSize: 12),
-                              ),
-                              SizedBox(
-                                height: media.width * 0.05,
-                              ),
-                              SizedBox(
-                                  width: 120,
-                                  height: 35,
-                                  child: RoundButton(
-                                      title: "Lihat Selengkapnya",
-                                      type: RoundButtonType.bgSGradient,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w400,
-                                      onPressed: () {}))
-                            ],
-                          ),
-                          AspectRatio(
-                            aspectRatio: 1,
-                            child: PieChart(
-                              PieChartData(
-                                pieTouchData: PieTouchData(
-                                  touchCallback:
-                                      (FlTouchEvent event, pieTouchResponse) {},
-                                ),
-                                startDegreeOffset: 250,
-                                borderData: FlBorderData(
-                                  show: false,
-                                ),
-                                sectionsSpace: 1,
-                                centerSpaceRadius: 0,
-                                sections: showingSections(),
+                    gradient: LinearGradient(colors: TColor.primaryG),
+                    borderRadius: BorderRadius.circular(media.width * 0.075),
+                  ),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Image.asset(
+                        "assets/img/bg_dots.png",
+                        height: media.width * 0.4,
+                        width: double.maxFinite,
+                        fit: BoxFit.fitHeight,
+                      ),
+                      Padding(
+                        padding:
+                            const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "BMI (Body Mass Index)",
+                                    style: TextStyle(
+                                        color: TColor.white,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w700),
+                                  ),
+                                  Text(
+                                    userBMI == null
+                                        ? "Lengkapi data tinggi/berat"
+                                        : (bmiStatus.isNotEmpty
+                                            ? bmiStatus
+                                            : "Menghitung..."),
+                                    style: TextStyle(
+                                        color: TColor.white.withOpacity(0.7),
+                                        fontSize: 12),
+                                  ),
+                                  SizedBox(height: 6),
+                                  userBMI == null
+                                      ? Container()
+                                      : Text(
+                                          userBMI!.toStringAsFixed(1),
+                                          style: TextStyle(
+                                              color: TColor.white,
+                                              fontSize: 28,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                  SizedBox(height: 6),
+                                  SizedBox(
+                                      width: 120,
+                                      height: 35,
+                                      child: RoundButton(
+                                        title: "Lihat Selengkapnya",
+                                        type: RoundButtonType.bgSGradient,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w400,
+                                        onPressed: () {
+                                          if (userWeight != null &&
+                                              userHeight != null &&
+                                              userWeight! > 0 &&
+                                              userHeight! > 0) {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      BmiResultView(
+                                                        weight: userWeight!,
+                                                        height: userHeight!,
+                                                      )),
+                                            );
+                                          } else {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              const SnackBar(
+                                                  content: Text(
+                                                      'Data berat dan tinggi belum lengkap!')),
+                                            );
+                                          }
+                                        },
+                                      ))
+                                ],
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    )
-                  ]),
+                            AspectRatio(
+                              aspectRatio: 1,
+                              child: PieChart(
+                                PieChartData(
+                                  startDegreeOffset: 250,
+                                  borderData: FlBorderData(show: false),
+                                  sectionsSpace: 1,
+                                  centerSpaceRadius: 0,
+                                  sections: [
+                                    PieChartSectionData(
+                                      color: TColor.secondaryColor1,
+                                      value: (userBMI != null && userBMI! < 40)
+                                          ? userBMI!
+                                          : 20, // fallback
+                                      title: '',
+                                      radius: 55,
+                                      badgeWidget: userBMI != null
+                                          ? Text(
+                                              userBMI!.toStringAsFixed(1),
+                                              style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w700),
+                                            )
+                                          : null,
+                                    ),
+                                    PieChartSectionData(
+                                      color: Colors.white,
+                                      value: (userBMI != null && userBMI! < 40)
+                                          ? (40 - userBMI!)
+                                          : 20, // fallback
+                                      title: '',
+                                      radius: 45,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
+                // ...lanjutkan kode lain seperti sebelumnya...
                 SizedBox(
                   height: media.width * 0.05,
                 ),
@@ -454,7 +599,7 @@ class _HomeViewState extends State<HomeView> {
                               height: media.width * 0.85,
                               width: media.width * 0.07,
                               backgroundColor: Colors.grey.shade100,
-                              foregroundColor: Colors.purple, // perbaikan typo
+                              foregroundColor: Colors.purple,
                               ratio: 0.5,
                               direction: Axis.vertical,
                               curve: Curves.fastLinearToSlowEaseIn,
@@ -952,42 +1097,7 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  List<PieChartSectionData> showingSections() {
-    return List.generate(
-      2,
-      (i) {
-        var color0 = TColor.secondaryColor1;
-
-        switch (i) {
-          case 0:
-            return PieChartSectionData(
-                color: color0,
-                value: 33,
-                title: '',
-                radius: 55,
-                titlePositionPercentageOffset: 0.55,
-                badgeWidget: const Text(
-                  "20,1",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700),
-                ));
-          case 1:
-            return PieChartSectionData(
-              color: Colors.white,
-              value: 75,
-              title: '',
-              radius: 45,
-              titlePositionPercentageOffset: 0.55,
-            );
-
-          default:
-            throw Error();
-        }
-      },
-    );
-  }
+  // PieChartSectionData dinamis sudah diatur di build dengan badge sesuai BMI
 
   LineTouchData get lineTouchData1 => LineTouchData(
         handleBuiltInTouches: true,

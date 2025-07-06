@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../common/colo_extension.dart';
 import '../../common_widget/round_button.dart';
-// Tidak perlu lagi mengimpor MainTabView secara langsung saat menggunakan named routes
-// import '../main_tab/main_tab_view.dart';
 
 class WelcomeView extends StatefulWidget {
   const WelcomeView({super.key});
@@ -13,6 +13,39 @@ class WelcomeView extends StatefulWidget {
 }
 
 class _WelcomeViewState extends State<WelcomeView> {
+  String? fullName;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserName();
+  }
+
+  Future<void> _loadUserName() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      final doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final data = doc.data();
+      if (data != null) {
+        setState(() {
+          fullName = "${data['firstName']} ${data['lastName']}";
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          fullName = "";
+          isLoading = false;
+        });
+      }
+    } else {
+      setState(() {
+        fullName = "";
+        isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
@@ -37,25 +70,26 @@ class _WelcomeViewState extends State<WelcomeView> {
               SizedBox(
                 height: media.width * 0.1,
               ),
+              isLoading
+                  ? const CircularProgressIndicator()
+                  : Text(
+                      fullName != null && fullName!.trim().isNotEmpty
+                          ? "Selamat Datang, $fullName"
+                          : "Selamat Datang",
+                      style: TextStyle(
+                          color: TColor.black,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700),
+                    ),
               Text(
-                "Selamat Datang, Adi Arwan Syah", 
-                style: TextStyle(
-                    color: TColor.black,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700),
-              ),
-              Text(
-                "Anda sudah siap, mari raih tujuan Anda\nbersama kami", 
+                "Anda sudah siap, mari raih tujuan Anda\nbersama kami",
                 textAlign: TextAlign.center,
                 style: TextStyle(color: TColor.gray, fontSize: 12),
               ),
               const Spacer(),
               RoundButton(
-                title: "Lanjutkan ke Beranda", // Diterjemahkan
+                title: "Lanjutkan ke Beranda",
                 onPressed: () {
-                  // Gunakan pushReplacementNamed untuk navigasi ke MainTabView
-                  // Ini mencegah pengguna kembali ke WelcomeView
-                  // setelah menyelesaikan orientasi/pengaturan profil.
                   Navigator.pushReplacementNamed(context, '/main_tab');
                 },
               ),

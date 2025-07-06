@@ -2,6 +2,7 @@ import 'package:fitness/common/colo_extension.dart';
 import 'package:fitness/view/workout_tracker/workour_detail_view.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../common_widget/round_button.dart';
 import '../../common_widget/upcoming_workout_row.dart';
@@ -15,18 +16,7 @@ class WorkoutTrackerView extends StatefulWidget {
 }
 
 class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
-  List latestArr = [
-    {
-      "image": "assets/img/Workout1.png",
-      "title": "Fullbody Workout",
-      "time": "Today, 03:00pm"
-    },
-    {
-      "image": "assets/img/Workout2.png",
-      "title": "Upperbody Workout",
-      "time": "June 05, 02:00pm"
-    },
-  ];
+  List<Map<String, dynamic>> latestArr = [];
 
   List whatArr = [
     {
@@ -50,11 +40,58 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    loadUpcomingWorkouts();
+  }
+
+  Future<void> loadUpcomingWorkouts() async {
+  final now = DateTime.now();
+
+  final snapshot = await FirebaseFirestore.instance
+      .collection('workout_schedule') // 🔁 PENTING: ubah ke 'workout_schedule'
+      .orderBy('timestamp')
+      .get();
+
+  final upcomingList = snapshot.docs
+      .map((doc) {
+        final data = doc.data();
+        final timestamp = data['timestamp'] as Timestamp;
+        final date = timestamp.toDate();
+
+        // filter: hanya data yang akan datang
+        if (date.isAfter(now)) {
+          final formattedDate =
+              "${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}, ${formatTime(date)}";
+
+          return {
+            "image": "assets/img/Workout1.png",
+            "title": data['name'] ?? 'Workout',
+            "time": formattedDate,
+          };
+        } else {
+          return null;
+        }
+      })
+      .whereType<Map<String, dynamic>>() // hilangkan null
+      .toList();
+
+  setState(() {
+    latestArr = upcomingList;
+  });
+}
+
+  String formatTime(DateTime time) {
+    final hour = time.hour > 12 ? time.hour - 12 : time.hour;
+    final amPm = time.hour >= 12 ? "PM" : "AM";
+    return "${hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')} $amPm";
+  }
+
+  @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
     return Container(
-      decoration:
-          BoxDecoration(gradient: LinearGradient(colors: TColor.primaryG)),
+      decoration: BoxDecoration(gradient: LinearGradient(colors: TColor.primaryG)),
       child: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) {
           return [
@@ -62,7 +99,6 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
               backgroundColor: Colors.transparent,
               centerTitle: true,
               elevation: 0,
-              // pinned: true,
               leading: InkWell(
                 onTap: () {
                   Navigator.pop(context);
@@ -124,66 +160,7 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
                 width: double.maxFinite,
                 child: LineChart(
                   LineChartData(
-                    lineTouchData: LineTouchData(
-                      enabled: true,
-                      handleBuiltInTouches: false,
-                      touchCallback:
-                          (FlTouchEvent event, LineTouchResponse? response) {
-                        if (response == null || response.lineBarSpots == null) {
-                          return;
-                        }
-                        // if (event is FlTapUpEvent) {
-                        //   final spotIndex =
-                        //       response.lineBarSpots!.first.spotIndex;
-                        //   showingTooltipOnSpots.clear();
-                        //   setState(() {
-                        //     showingTooltipOnSpots.add(spotIndex);
-                        //   });
-                        // }
-                      },
-                      mouseCursorResolver:
-                          (FlTouchEvent event, LineTouchResponse? response) {
-                        if (response == null || response.lineBarSpots == null) {
-                          return SystemMouseCursors.basic;
-                        }
-                        return SystemMouseCursors.click;
-                      },
-                      getTouchedSpotIndicator:
-                          (LineChartBarData barData, List<int> spotIndexes) {
-                        return spotIndexes.map((index) {
-                          return TouchedSpotIndicatorData(
-                            const FlLine(
-                              color: Colors.transparent,
-                            ),
-                            FlDotData(
-                              show: true,
-                              getDotPainter: (spot, percent, barData, index) =>
-                                  FlDotCirclePainter(
-                                radius: 3,
-                                color: Colors.white,
-                                strokeWidth: 3,
-                                strokeColor: TColor.secondaryColor1,
-                              ),
-                            ),
-                          );
-                        }).toList();
-                      },
-                      touchTooltipData: LineTouchTooltipData(
-                        getTooltipColor: (_) => TColor.secondaryColor1,
-                        getTooltipItems: (List<LineBarSpot> lineBarsSpot) {
-                          return lineBarsSpot.map((lineBarSpot) {
-                            return LineTooltipItem(
-                              "${lineBarSpot.x.toInt()} mins ago",
-                              const TextStyle(
-                                color: Colors.white,
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            );
-                          }).toList();
-                        },
-                      ),
-                    ),
+                    lineTouchData: lineTouchData1,
                     lineBarsData: lineBarsData1,
                     minY: -0.5,
                     maxY: 110,
@@ -232,9 +209,7 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
             body: SingleChildScrollView(
               child: Column(
                 children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  const SizedBox(height: 10),
                   Container(
                     width: 50,
                     height: 4,
@@ -242,9 +217,7 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
                         color: TColor.gray.withOpacity(0.3),
                         borderRadius: BorderRadius.circular(3)),
                   ),
-                  SizedBox(
-                    height: media.width * 0.05,
-                  ),
+                  SizedBox(height: media.width * 0.05),
                   Container(
                     padding: const EdgeInsets.symmetric(
                         vertical: 15, horizontal: 15),
@@ -271,22 +244,26 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
                             fontSize: 12,
                             fontWeight: FontWeight.w400,
                             onPressed: () {
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //     builder: (context) =>
-                              //         const ActivityTrackerView(),
-                              //   ),
-                              // );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => WorkoutDetailView(
+                                    dObj: {
+                                      "title": "Daily Workout",
+                                      "exercises": "10 Exercises",
+                                      "time": "30mins",
+                                      "image": "assets/img/Workout1.png"
+                                    },
+                                  ),
+                                ),
+                              );
                             },
                           ),
                         )
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: media.width * 0.05,
-                  ),
+                  SizedBox(height: media.width * 0.05),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -298,7 +275,26 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
                             fontWeight: FontWeight.w700),
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          showModalBottomSheet(
+                            context: context,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(20)),
+                            ),
+                            backgroundColor: Colors.white,
+                            builder: (context) {
+                              return ListView.builder(
+                                padding: const EdgeInsets.all(20),
+                                itemCount: latestArr.length,
+                                itemBuilder: (context, index) {
+                                  var wObj = latestArr[index];
+                                  return UpcomingWorkoutRow(wObj: wObj);
+                                },
+                              );
+                            },
+                          );
+                        },
                         child: Text(
                           "See More",
                           style: TextStyle(
@@ -315,12 +311,10 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
                       shrinkWrap: true,
                       itemCount: latestArr.length,
                       itemBuilder: (context, index) {
-                        var wObj = latestArr[index] as Map? ?? {};
+                        var wObj = latestArr[index];
                         return UpcomingWorkoutRow(wObj: wObj);
                       }),
-                  SizedBox(
-                    height: media.width * 0.05,
-                  ),
+                  SizedBox(height: media.width * 0.05),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -341,14 +335,18 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
                       itemBuilder: (context, index) {
                         var wObj = whatArr[index] as Map? ?? {};
                         return InkWell(
-                          onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) =>  WorkoutDetailView( dObj: wObj, ) ));
-                          },
-                          child:  WhatTrainRow(wObj: wObj) );
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      WorkoutDetailView(dObj: wObj),
+                                ),
+                              );
+                            },
+                            child: WhatTrainRow(wObj: wObj));
                       }),
-                  SizedBox(
-                    height: media.width * 0.1,
-                  ),
+                  SizedBox(height: media.width * 0.1),
                 ],
               ),
             ),
@@ -394,9 +392,7 @@ class _WorkoutTrackerViewState extends State<WorkoutTrackerView> {
         barWidth: 2,
         isStrokeCapRound: true,
         dotData: const FlDotData(show: false),
-        belowBarData: BarAreaData(
-          show: false,
-        ),
+        belowBarData: BarAreaData(show: false),
         spots: const [
           FlSpot(1, 80),
           FlSpot(2, 50),

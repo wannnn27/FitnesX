@@ -19,6 +19,7 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
   TextEditingController txtHeight = TextEditingController();
 
   String? _selectedGender;
+  DateTime? _selectedDate;
 
   @override
   void dispose() {
@@ -26,6 +27,26 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
     txtWeight.dispose();
     txtHeight.dispose();
     super.dispose();
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now().subtract(const Duration(days: 365 * 20)), // Default 20 tahun yang lalu
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+      helpText: 'Pilih Tanggal Lahir',
+      confirmText: 'PILIH',
+      cancelText: 'BATAL',
+    );
+    
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+        // Format tanggal ke dd-mm-yyyy
+        txtDate.text = "${picked.day.toString().padLeft(2, '0')}-${picked.month.toString().padLeft(2, '0')}-${picked.year}";
+      });
+    }
   }
 
   Future<void> _saveProfileData() async {
@@ -49,13 +70,27 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
       return;
     }
 
+    if (weight <= 0 || height <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Berat dan tinggi harus lebih dari 0!')),
+      );
+      return;
+    }
+
+    if (_selectedDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Pilih tanggal lahir terlebih dahulu!')),
+      );
+      return;
+    }
+
     try {
       final uid = FirebaseAuth.instance.currentUser?.uid;
       if (uid == null) throw Exception("User tidak ditemukan!");
 
       await FirebaseFirestore.instance.collection('users').doc(uid).set({
         'gender': _selectedGender,
-        'birthDate': txtDate.text,
+        'birthDate': txtDate.text, // Format: dd-mm-yyyy
         'weight': weight,
         'height': height,
         'updatedAt': Timestamp.now(),
@@ -161,11 +196,17 @@ class _CompleteProfileViewState extends State<CompleteProfileView> {
                         ),
                       ),
                       SizedBox(height: media.width * 0.04),
-                      RoundTextField(
-                        controller: txtDate,
-                        hitText: "Tanggal Lahir",
-                        icon: "assets/img/date.png",
-                        keyboardType: TextInputType.datetime,
+                      // Date Field dengan DatePicker
+                      GestureDetector(
+                        onTap: () => _selectDate(context),
+                        child: AbsorbPointer(
+                          child: RoundTextField(
+                            controller: txtDate,
+                            hitText: "Tanggal Lahir",
+                            icon: "assets/img/date.png",
+                            keyboardType: TextInputType.datetime,
+                          ),
+                        ),
                       ),
                       SizedBox(height: media.width * 0.04),
                       Row(
