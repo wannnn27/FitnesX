@@ -1,10 +1,5 @@
-import 'dart:io'; // Import untuk File
-
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart'; // Import ImagePicker
-import 'package:firebase_storage/firebase_storage.dart'; // Import Firebase Storage
-import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
-import 'package:intl/intl.dart'; // Untuk format tanggal
+import 'package:image_picker/image_picker.dart'; // <-- 1. Tambahkan import ini
 
 import '../../common/colo_extension.dart';
 import '../../common_widget/round_button.dart';
@@ -18,93 +13,37 @@ class PhotoProgressView extends StatefulWidget {
 }
 
 class _PhotoProgressViewState extends State<PhotoProgressView> {
-  // Data foto yang akan diambil dari Firestore
-  List<Map<String, dynamic>> _allProgressPhotos = [];
-  bool _isLoadingPhotos = true; // Untuk indikator loading galeri
+  final ImagePicker _picker = ImagePicker();
 
-  final ImagePicker _picker = ImagePicker(); // Inisialisasi ImagePicker
-
-  @override
-  void initState() {
-    super.initState();
-    _loadProgressPhotos(); // Muat foto saat halaman diinisialisasi
-  }
-
-  // Fungsi untuk memuat foto progres dari Firestore
-  Future<void> _loadProgressPhotos() async {
-    setState(() {
-      _isLoadingPhotos = true;
-      _allProgressPhotos = []; // Reset list
-    });
-
-    try {
-      // Ambil semua dokumen dari koleksi 'progress_photos'
-      QuerySnapshot snapshot = await FirebaseFirestore.instance
-          .collection('progress_photos')
-          .orderBy('timestamp', descending: true) // Urutkan dari terbaru
-          .get();
-
-      // Kelompokkan foto berdasarkan bulan
-      Map<String, List<String>> groupedPhotos = {}; // {"June 2025": ["url1", "url2"], ...}
-      Map<String, DateTime> monthDates = {}; // Untuk menyimpan DateTime asli dari bulan tersebut
-
-      for (var doc in snapshot.docs) {
-        var data = doc.data() as Map<String, dynamic>;
-        String? imageUrl = data['imageUrl'] as String?;
-        Timestamp? timestamp = data['timestamp'] as Timestamp?;
-
-        if (imageUrl != null && timestamp != null) {
-          DateTime date = timestamp.toDate();
-          String monthYearKey = DateFormat('MMMM yyyy', 'id').format(date); // Format "Juni 2025" dengan locale ID
-
-          if (!groupedPhotos.containsKey(monthYearKey)) {
-            groupedPhotos[monthYearKey] = [];
-            monthDates[monthYearKey] = DateTime(date.year, date.month); // Simpan hanya tahun dan bulan
-          }
-          groupedPhotos[monthYearKey]!.add(imageUrl);
-        }
-      }
-
-      // Konversi ke format yang sesuai untuk ListView.builder
-      List<Map<String, dynamic>> tempPhotoArr = [];
-      // Urutkan key (bulan) secara kronologis menurun
-      List<String> sortedMonthKeys = groupedPhotos.keys.toList()
-        ..sort((a, b) {
-          DateTime dateA = DateFormat('MMMM yyyy', 'id').parse(a);
-          DateTime dateB = DateFormat('MMMM yyyy', 'id').parse(b);
-          return dateB.compareTo(dateA); // Urutkan menurun (terbaru di atas)
-        });
-
-      for (String monthYearKey in sortedMonthKeys) {
-        tempPhotoArr.add({
-          "time": monthYearKey,
-          "displayDate": monthDates[monthYearKey], // Simpan DateTime objek untuk Compare
-          "photo": groupedPhotos[monthYearKey]!,
-        });
-      }
-
-      setState(() {
-        _allProgressPhotos = tempPhotoArr;
-      });
-    } catch (e) {
-      print("Error loading progress photos: $e");
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Gagal memuat foto progress: $e")),
-        );
-      }
-    } finally {
-      setState(() {
-        _isLoadingPhotos = false;
-      });
+  List photoArr = [
+    {
+      "time": "2 June",
+      "photo": [
+        "assets/img/pp_1.png",
+        "assets/img/pp_2.png",
+        "assets/img/pp_3.png",
+        "assets/img/pp_4.png",
+      ]
+    },
+    {
+      "time": "5 May",
+      "photo": [
+        "assets/img/pp_5.png",
+        "assets/img/pp_6.png",
+        "assets/img/pp_7.png",
+        "assets/img/pp_8.png",
+      ]
     }
-  }
+  ];
 
-  // Fungsi untuk mengambil foto dari galeri atau kamera
-  Future<void> _takeOrPickPhoto() async {
+  // <-- 2. Tambahkan fungsi untuk menampilkan pilihan
+  void _showImagePickerOptions() {
     showModalBottomSheet(
       context: context,
-      builder: (BuildContext context) {
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+      ),
+      builder: (context) {
         return SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -112,23 +51,17 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
               ListTile(
                 leading: const Icon(Icons.photo_library),
                 title: const Text('Pilih dari Galeri'),
-                onTap: () async {
-                  Navigator.pop(context);
-                  final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-                  if (image != null) {
-                    _uploadPhotoAndSaveToFirestore(File(image.path));
-                  }
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _pickImageFromGallery();
                 },
               ),
               ListTile(
                 leading: const Icon(Icons.camera_alt),
                 title: const Text('Ambil Foto'),
-                onTap: () async {
-                  Navigator.pop(context);
-                  final XFile? image = await _picker.pickImage(source: ImageSource.camera);
-                  if (image != null) {
-                    _uploadPhotoAndSaveToFirestore(File(image.path));
-                  }
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _pickImageFromCamera();
                 },
               ),
             ],
@@ -138,49 +71,23 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
     );
   }
 
-  // Fungsi untuk mengunggah foto ke Firebase Storage dan menyimpan URL ke Firestore
-  Future<void> _uploadPhotoAndSaveToFirestore(File imageFile) async {
-    setState(() {
-      _isLoadingPhotos = true; // Tampilkan loading saat upload
-    });
-
-    try {
-      // 1. Unggah gambar ke Firebase Storage
-      String fileName = 'progress_photos/${DateTime.now().millisecondsSinceEpoch}_${imageFile.path.split('/').last}';
-      Reference storageRef = FirebaseStorage.instance.ref().child(fileName);
-      UploadTask uploadTask = storageRef.putFile(imageFile);
-      TaskSnapshot snapshot = await uploadTask;
-      String imageUrl = await snapshot.ref.getDownloadURL();
-
-      // 2. Simpan metadata foto ke Firestore
-      await FirebaseFirestore.instance.collection('progress_photos').add({
-        'imageUrl': imageUrl,
-        'timestamp': Timestamp.now(), // Simpan timestamp saat ini
-        // Anda bisa menambahkan metadata lain di sini (misal: 'angle': 'front')
-      });
-
-      // 3. Muat ulang foto setelah berhasil diunggah dan disimpan
-      await _loadProgressPhotos();
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Foto progress berhasil ditambahkan!")),
-        );
-      }
-    } catch (e) {
-      print("Error uploading photo or saving to Firestore: $e");
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Gagal menambahkan foto: $e")),
-        );
-      }
-    } finally {
-      setState(() {
-        _isLoadingPhotos = false; // Sembunyikan loading
-      });
+  // <-- 3. Tambahkan fungsi untuk memilih dari galeri
+  Future<void> _pickImageFromGallery() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      // TODO: Tambahkan logika untuk mengunggah atau menampilkan gambar
+      print('Path gambar dari galeri: ${image.path}');
     }
   }
 
+  // <-- 4. Tambahkan fungsi untuk mengambil foto dari kamera
+  Future<void> _pickImageFromCamera() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+    if (image != null) {
+      // TODO: Tambahkan logika untuk mengunggah atau menampilkan gambar
+      print('Path gambar dari kamera: ${image.path}');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -190,19 +97,26 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
         backgroundColor: TColor.white,
         centerTitle: true,
         elevation: 0,
-        // --- PERBAIKAN DI SINI: Tombol Kembali ---
-        leading: IconButton(
-          icon: Image.asset(
-            "assets/img/black_btn.png", // Asumsi ini ikon panah kembali yang Anda inginkan
-            width: 15,
-            height: 15,
-            fit: BoxFit.contain,
-          ),
-          onPressed: () {
-            Navigator.pop(context); // Kembali ke halaman sebelumnya
+        leading: InkWell(
+          onTap: () {
+            Navigator.pop(context);
           },
+          child: Container(
+            margin: const EdgeInsets.all(8),
+            height: 40,
+            width: 40,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+                color: TColor.lightGray,
+                borderRadius: BorderRadius.circular(10)),
+            child: Image.asset(
+              "assets/img/black_btn.png",
+              width: 15,
+              height: 15,
+              fit: BoxFit.contain,
+            ),
+          ),
         ),
-        // --- AKHIR PERBAIKAN ---
         title: Text(
           "Progress Photo",
           style: TextStyle(
@@ -210,9 +124,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
         ),
         actions: [
           InkWell(
-            onTap: () {
-              print("More options clicked for progress photo view");
-            },
+            onTap: () {},
             child: Container(
               margin: const EdgeInsets.all(8),
               height: 40,
@@ -237,8 +149,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               child: Container(
                 width: double.maxFinite,
                 padding: const EdgeInsets.all(15),
@@ -273,7 +184,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
                                   fontWeight: FontWeight.w500),
                             ),
                             Text(
-                              "Next Photos Fall On ${DateFormat('MMMM dd').format(DateTime(DateTime.now().year, DateTime.now().month + 1, 8))}", // Menggunakan tanggal yang dinamis
+                              "Next Photos Fall On July 08",
                               style: TextStyle(
                                   color: TColor.black,
                                   fontSize: 14,
@@ -296,8 +207,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
               ),
             ),
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               child: Container(
                 width: double.maxFinite,
                 padding: const EdgeInsets.all(20),
@@ -364,8 +274,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
             SizedBox(height: media.width * 0.05),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 20),
-              padding:
-                  const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
               decoration: BoxDecoration(
                 color: TColor.primaryColor2.withOpacity(0.3),
                 borderRadius: BorderRadius.circular(15),
@@ -389,15 +298,10 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
                       fontSize: 12,
                       fontWeight: FontWeight.w400,
                       onPressed: () {
-                        // Saat tombol Compare ditekan, navigasi ke ComparisonView
-                        // dan teruskan data foto yang sudah di-load
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ComparisonView(
-                              // Kirim _allProgressPhotos yang sudah di-load dan dikelompokkan
-                              allPhotos: _allProgressPhotos,
-                            ),
+                            builder: (context) => const ComparisonView(),
                           ),
                         );
                       },
@@ -407,8 +311,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
               ),
             ),
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -420,9 +323,7 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
                         fontWeight: FontWeight.w700),
                   ),
                   TextButton(
-                      onPressed: () {
-                        print("See more gallery clicked");
-                      },
+                      onPressed: () {},
                       child: Text(
                         "See more",
                         style: TextStyle(color: TColor.gray, fontSize: 12),
@@ -430,90 +331,62 @@ class _PhotoProgressViewState extends State<PhotoProgressView> {
                 ],
               ),
             ),
-            // Tampilkan loading indicator atau pesan jika _isLoadingPhotos
-            if (_isLoadingPhotos)
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: CircularProgressIndicator(color: TColor.primaryColor1)),
-              )
-            else if (_allProgressPhotos.isEmpty)
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Text(
-                    "Belum ada foto progress. Yuk, tambahkan yang pertama!",
-                    style: TextStyle(color: TColor.gray, fontSize: 14),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              )
-            else
-              // Tampilan galeri dengan foto dari Firestore
-              ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: _allProgressPhotos.length,
-                  itemBuilder: ((context, index) {
-                    var pObj = _allProgressPhotos[index]; // Map<String, dynamic>
-                    var imaArr = pObj["photo"] as List<String>? ?? []; // List of image URLs
+            ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: photoArr.length,
+                itemBuilder: ((context, index) {
+                  var pObj = photoArr[index] as Map? ?? {};
+                  var imaArr = pObj["photo"] as List? ?? [];
 
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            pObj["time"].toString(), // e.g., "Juni 2025"
-                            style: TextStyle(color: TColor.gray, fontSize: 12),
-                          ),
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          pObj["time"].toString(),
+                          style: TextStyle(color: TColor.gray, fontSize: 12),
                         ),
-                        SizedBox(
-                          height: 100, // Ketinggian tetap untuk scroll horizontal
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            padding: EdgeInsets.zero,
-                            itemCount: imaArr.length,
-                            itemBuilder: ((context, indexRow) {
-                              String imageUrl = imaArr[indexRow];
-                              return Container(
-                                margin: const EdgeInsets.symmetric(horizontal: 4),
-                                width: 100, // Lebar tetap untuk setiap gambar
-                                decoration: BoxDecoration(
-                                  color: TColor.lightGray,
-                                  borderRadius: BorderRadius.circular(10),
+                      ),
+                      SizedBox(
+                        height: 100,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          padding: EdgeInsets.zero,
+                          itemCount: imaArr.length,
+                          itemBuilder: ((context, indexRow) {
+                            return Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 4),
+                              width: 100,
+                              decoration: BoxDecoration(
+                                color: TColor.lightGray,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.asset(
+                                  imaArr[indexRow] as String? ?? "",
+                                  width: 100,
+                                  height: 100,
+                                  fit: BoxFit.cover,
                                 ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Image.network( // Gunakan Image.network untuk URL
-                                    imageUrl,
-                                    width: 100,
-                                    height: 100,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Container( // Fallback jika gambar gagal dimuat
-                                        color: TColor.gray.withOpacity(0.2),
-                                        alignment: Alignment.center,
-                                        child: Icon(Icons.broken_image, color: TColor.gray),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              );
-                            }),
-                          ),
+                              ),
+                            );
+                          }),
                         ),
-                      ],
-                    );
-                  })),
+                      ),
+                    ],
+                  );
+                })),
             SizedBox(height: media.width * 0.05),
           ],
         ),
       ),
-      // Floating Action Button untuk menambahkan foto
+      // <-- 5. Panggil fungsi saat tombol ditekan
       floatingActionButton: InkWell(
-        onTap: _takeOrPickPhoto, // Panggil fungsi untuk mengambil/memilih foto
+        onTap: _showImagePickerOptions, // Diubah dari implementasi kosong
         child: Container(
           width: 55,
           height: 55,
